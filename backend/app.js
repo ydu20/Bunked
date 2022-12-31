@@ -23,7 +23,7 @@ app.use(morgan("dev"));
 app.use(cors({origin: true, credentials: true}));
 
 // routes
-const userRoutes = require('./routes/users');
+const userRoutes = require('./routes/user.routes');
 app.use("/", userRoutes);
 
 // port

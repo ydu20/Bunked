@@ -21,11 +21,15 @@ const userBioSchema = new Schema ({
         required: true,
         trim: true,
     }, 
+    year: {
+        type: Number,
+        required: true,
+    },
     extroversion: {
         type: Number,
         required: true,
     },
-    cleaniness: {
+    cleanliness: {
         type: Number,
         required: true,
     },
@@ -36,19 +40,16 @@ const userBioSchema = new Schema ({
     sleep: {
         start : {
             type: Number,
-            required: true,
         }, 
         end : {
             type: Number,
-            required: true,
         }
     },
     guests: Number,
     dorm: [String],
-    greek: String,
-    smoke: String,
-    drink: String,
-    allergies: [String],
+    greek: Number,
+    smoke: Number,
+    drink: Number,
     hobbies: [String],
     hometown: String,
     music: [String],
