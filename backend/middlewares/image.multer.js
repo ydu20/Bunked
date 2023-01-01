@@ -25,20 +25,6 @@ const fileFilter = (req, file, cb) => {
 
 exports.saveImg = async (req, res, next) => {
 
-    // check if user exists
-
-    // if (!req.fields.email) {
-    //     res.status(400).json('Error: email field missing');
-    //     return;
-    // }
-    
-    // const exists = await User.findOne({email: req.fields.email}).exec();
-
-    // if (!exists) {
-    //     res.status(400).json('Error: user not found');
-    //     return;
-    // }
-
     // save img files
     const upload = multer({ storage, fileFilter }).array('pictures', 2);
 
