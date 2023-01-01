@@ -55,6 +55,7 @@ const userBioSchema = new Schema ({
     music: [String],
     shows: [String],
     pictures: [String],
+    instagram: String,
 });
 
 const UserBio = mongoose.model('UserBio', userBioSchema);

@@ -164,4 +164,7 @@ module.exports.updateBio = checkSchema({
             }
         },
     },
+    instagram: {
+        optional: true,
+    }
 })
