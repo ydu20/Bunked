@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session)
+const tf = require('@tensorflow/tfjs')
+const encoder = require('@tensorflow-models/universal-sentence-encoder') // to load text encoder model
 
 // app
 const app = express();
@@ -49,6 +51,9 @@ app.use("/", userRoutes);
 
 // port
 const port = process.env.PORT || 8080;
+
+// Encoder model
+encoder.load().then(model => app.set('encoder', model));
 
 // listener
 const server = app.listen(port, () => console.log('Server is running on port ' + port));

@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 let User = require('../models/user.model');
 let UserBio = require('../models/user.bio.model')
 const validate = require("../middlewares/validators");
+const recommender = require("../scripts/recommender");
 
 // Register user
 exports.registerUser = async (req, res) => {
@@ -150,6 +151,10 @@ exports.updateUserBio = async (req, res) => {
   const pictures = req.body.pictures;
   const instagram = req.body.instagram;
 
+  // Embed hobbies into vectors
+  const model_embedder = req.app.get('encoder');
+  const hobbies_encoded = await recommender.embed(model_embedder, hobbies);
+
   const filter = {
     email
   };
@@ -167,6 +172,7 @@ exports.updateUserBio = async (req, res) => {
     ...(shows && {shows}),
     ...(pictures && {pictures}),
     ...(instagram && {instagram}),
+    ...(hobbies_encoded && {hobbies_encoded}),
   }
 
   UserBio.findOneAndUpdate(filter, update)
