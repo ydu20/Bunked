@@ -7,6 +7,8 @@ const router = express.Router();
 const userControllers = require('../controllers/user.controllers');
 const userImgControllers = require('../controllers/user.image.controllers');
 
+// Scripts
+const recommender = require('../scripts/recommender');
 
 // Middlewares
 const validate = require('../middlewares/validators');
@@ -36,6 +38,17 @@ router.delete('/logout', userControllers.logoutUser);
 router.post('/test', authorizeUser, (req, res) => {
     console.log(req.body);
     res.json("Success!");
+});
+
+
+// Extra test route used by Freddy
+router.post('/test2', async (req, res) => {
+    const t1 = performance.now();
+    const mdl = req.app.get('encoder');
+    const embeds = await recommender.embed(mdl, ['this', 'basketball'])
+    const t2 = performance.now();
+    console.log(t2-t1);
+    res.json(embeds);
 });
 
 module.exports = router;
