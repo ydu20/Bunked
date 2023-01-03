@@ -8,18 +8,11 @@ var userImageSchema = new Schema ({
         required: true,
         minlength: 5,
     },
-    index: {
-        type: Number,
+    files: {
+        type: [String],
         required: true,
-    },
-    filename: {
-        type: String,
-        required: true,
-        minlength: 5,
     }
 });
-
-userImageSchema.index({ email: 1, index: 1}, { unique: true });
 
 const UserImage = mongoose.model('UserImage', userImageSchema);
 

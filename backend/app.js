@@ -1,9 +1,11 @@
+require('dotenv').config();
 // import modules
 const express = require('express');
 const mongoose  = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
-require('dotenv').config();
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session)
 
 // app
 const app = express();
@@ -17,6 +19,25 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log("DB CONNECTED"))
 .catch((err) => console.log("DB CONNECTION ERROR", err));
 
+// setting up connect-mongodb-session store
+const mongoDBstore = new MongoDBStore({
+    uri: process.env.MONGODB_URI,
+    collection: 'userSessions',
+})
+
+app.use(session({
+    secret: 'catLabyrinthMonke2212',
+    name: 'session-id', 
+    store: mongoDBstore,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 3,
+      sameSite: 'lax',
+      HTTPonly: true,
+      secure: false,
+    },
+    resave: true,
+    saveUninitialized: false,
+}));
 
 // middleware
 app.use(morgan("dev"));
