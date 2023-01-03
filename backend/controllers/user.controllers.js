@@ -3,7 +3,7 @@ let User = require('../models/user.model');
 let UserBio = require('../models/user.bio.model')
 const validate = require("../middlewares/validators");
 
-
+// Register user
 exports.registerUser = async (req, res) => {
     // Check if params meet validation requirements
     
@@ -40,7 +40,39 @@ exports.registerUser = async (req, res) => {
     
 }
 
-// Create Bio for user
+// Login user
+exports.loginUser = async (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).json('Email or password field missing.');
+  }
+
+  const user = await User.findOne({email: req.body.email});
+  if (!user) {
+    return res.status(400).json("Incorrect email or password.")
+  }
+
+
+  if (await bcrypt.compare(password, user.password)) {
+    req.session.user = {email: user.email};
+    return res.json('Logged in!');
+  } else {
+    return res.status(400).json('Incorrect email or password.');
+  }
+}
+
+// Logout user
+exports.logoutUser = async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(400).json('Error logging out user');
+    } else {
+      res.clearCookie('session-id');
+      res.json('User logged out.');
+    }
+  })
+}
+
+// Create bio for user
 exports.createUserBio = async (req, res) => {
     // Check if params meet validation requirements
     const validationErrors = validate.validationResult(req);
@@ -83,6 +115,7 @@ exports.createUserBio = async (req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 }
 
+// Update a user's bio
 exports.updateUserBio = async (req, res) => {
   // Check if params meet validation requirements
   const validationErrors = validate.validationResult(req);
