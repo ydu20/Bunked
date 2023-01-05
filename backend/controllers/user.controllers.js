@@ -183,7 +183,7 @@ exports.updateUserBio = async (req, res) => {
 
 // Function that gives (10) recommendations based on nearest neighbors
 // Input req.body.email: email address of the base person
-// Output res: JSON array of (10) email addresses of the 10 recommended people
+// Output res: JSON array of (10) user objects of the 10 recommended people
 // ASSUMES that all of the fields are filled in (except for hobbies, images, dorm, music, shows)
 exports.recommendUsers = async (req, res) => {
   
