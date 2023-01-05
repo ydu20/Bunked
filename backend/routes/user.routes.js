@@ -7,10 +7,6 @@ const router = express.Router();
 const userControllers = require('../controllers/user.controllers');
 const userImgControllers = require('../controllers/user.image.controllers');
 
-// Scripts
-const recommender = require('../scripts/recommender');
-const UserBio = require('../models/user.bio.model');
-
 // Middlewares
 const validate = require('../middlewares/validators');
 const multer = require('../middlewares/image.multer');
@@ -45,11 +41,11 @@ router.post('/test', authorizeUser, (req, res) => {
 
 // Extra test route used by Freddy
 router.post('/test2', async (req, res) => {
-    const t1 = performance.now();
-    const count = await UserBio.find({$expr: {$lt: [0.5, {$rand: {}}]}});
-    const t2 = performance.now();
-    console.log(t2-t1);
-    res.json(typeof count);
+    // const t1 = performance.now();
+    // const count = await UserBio.find({$expr: {$lt: [0.5, {$rand: {}}]}});
+    // const t2 = performance.now();
+    // console.log(t2-t1);
+    // res.json(typeof count);
 });
 
 module.exports = router;
