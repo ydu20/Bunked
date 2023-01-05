@@ -180,3 +180,25 @@ exports.updateUserBio = async (req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 
 }
+
+// Function that gives (10) recommendations based on nearest neighbors
+// Input req.body.email: email address of the base person
+// Output res: JSON array of (10) email addresses of the 10 recommended people
+// ASSUMES that all of the fields are filled in (except for hobbies, images, dorm, music, shows)
+exports.recommendUsers = async (req, res) => {
+  
+  // Check if input user exists
+  const baseuser = await User.findOne({email: req.body.email});
+  if (!baseuser) {
+    return res.status(400).json("User not found");
+  }
+
+  const baseuserbio = await UserBio.findOne({email: req.body.email});
+  if (!baseuserbio) {
+    return res.status(400).json("User bio not completed");
+  }
+
+  const nearestUsers = await recommender.findNearest(baseuserbio, 10); // Can change the number in the second parameter to get larger/smaller number of recommendations
+
+  res.json(nearestUsers);
+}

@@ -9,6 +9,7 @@ const userImgControllers = require('../controllers/user.image.controllers');
 
 // Scripts
 const recommender = require('../scripts/recommender');
+const UserBio = require('../models/user.bio.model');
 
 // Middlewares
 const validate = require('../middlewares/validators');
@@ -34,6 +35,7 @@ router.get('/profile-pic', userImgControllers.getImage);
 router.delete('/profile-pic', userImgControllers.deleteImage);
 router.post('/login', userControllers.loginUser);
 router.delete('/logout', userControllers.logoutUser);
+router.get('/recommend', userControllers.recommendUsers);
 
 router.post('/test', authorizeUser, (req, res) => {
     console.log(req.body);
@@ -44,11 +46,10 @@ router.post('/test', authorizeUser, (req, res) => {
 // Extra test route used by Freddy
 router.post('/test2', async (req, res) => {
     const t1 = performance.now();
-    const mdl = req.app.get('encoder');
-    const embeds = await recommender.embed(mdl, ['this', 'basketball'])
+    const count = await UserBio.find({$expr: {$lt: [0.5, {$rand: {}}]}});
     const t2 = performance.now();
     console.log(t2-t1);
-    res.json(embeds);
+    res.json(typeof count);
 });
 
 module.exports = router;
