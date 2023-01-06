@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 let User = require('../models/user.model');
 let UserBio = require('../models/user.bio.model')
 const validate = require("../middlewares/validators");
+const recommender = require("../scripts/recommender");
 
 // Register user
 exports.registerUser = async (req, res) => {
@@ -156,6 +157,10 @@ exports.updateUserBio = async (req, res) => {
   const pictures = req.body.pictures;
   const instagram = req.body.instagram;
 
+  // Embed hobbies into vectors
+  const model_embedder = req.app.get('encoder');
+  const hobbies_encoded = await recommender.embed(model_embedder, hobbies);
+
   const filter = {
     email
   };
@@ -173,10 +178,33 @@ exports.updateUserBio = async (req, res) => {
     ...(shows && {shows}),
     ...(pictures && {pictures}),
     ...(instagram && {instagram}),
+    ...(hobbies_encoded && {hobbies_encoded}),
   }
 
   UserBio.findOneAndUpdate(filter, update)
     .then(() => res.json('Bio Updated!'))
     .catch(err => res.status(400).json('Error: ' + err));
 
+}
+
+// Function that gives (10) recommendations based on nearest neighbors
+// Input req.body.email: email address of the base person
+// Output res: JSON array of (10) user objects of the 10 recommended people
+// ASSUMES that all of the fields are filled in (except for hobbies, images, dorm, music, shows)
+exports.recommendUsers = async (req, res) => {
+  
+  // Check if input user exists
+  const baseuser = await User.findOne({email: req.body.email});
+  if (!baseuser) {
+    return res.status(400).json("User not found");
+  }
+
+  const baseuserbio = await UserBio.findOne({email: req.body.email});
+  if (!baseuserbio) {
+    return res.status(400).json("User bio not completed");
+  }
+
+  const nearestUsers = await recommender.findNearest(baseuserbio, 10); // Can change the number in the second parameter to get larger/smaller number of recommendations
+
+  res.json(nearestUsers);
 }

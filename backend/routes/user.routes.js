@@ -7,7 +7,6 @@ const router = express.Router();
 const userControllers = require('../controllers/user.controllers');
 const userImgControllers = require('../controllers/user.image.controllers');
 
-
 // Middlewares
 const validate = require('../middlewares/validators');
 const multer = require('../middlewares/image.multer');
@@ -43,6 +42,7 @@ router.get('/profile-pic', authorizeUser, userImgControllers.getImage);
 router.delete('/profile-pic', authorizeUser, userImgControllers.deleteImage);
 router.post('/login', userControllers.loginUser);
 router.delete('/logout', userControllers.logoutUser);
+router.get('/recommend', userControllers.recommendUsers);
 
 router.get('/test', authorizeUser, (req, res) => {
     if (req.session.user) {
@@ -50,6 +50,16 @@ router.get('/test', authorizeUser, (req, res) => {
     } else {
         res.json('Not logged in.');
     }
+});
+
+
+// Extra test route used by Freddy
+router.post('/test2', async (req, res) => {
+    // const t1 = performance.now();
+    // const count = await UserBio.find({$expr: {$lt: [0.5, {$rand: {}}]}});
+    // const t2 = performance.now();
+    // console.log(t2-t1);
+    // res.json(typeof count);
 });
 
 module.exports = router;
