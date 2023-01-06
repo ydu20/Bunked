@@ -28,7 +28,6 @@ exports.registerUser = async (req, res) => {
     const password = req.body.password;
     const hashed = bcrypt.hashSync(password, 10);
 
-
     const newUser = new User ({
         email: email,
         name: name,
@@ -42,6 +41,13 @@ exports.registerUser = async (req, res) => {
 
 // Login user
 exports.loginUser = async (req, res) => {
+  
+  if (req.session.user) {
+    return res.status(400).json('Already logged in as ' + req.session.user.email);
+  }
+
+  console.log(req.body);
+
   if (!req.body.email || !req.body.password) {
     return res.status(400).json('Email or password field missing.');
   }
@@ -52,7 +58,7 @@ exports.loginUser = async (req, res) => {
   }
 
 
-  if (await bcrypt.compare(password, user.password)) {
+  if (await bcrypt.compare(req.body.password, user.password)) {
     req.session.user = {email: user.email};
     return res.json('Logged in!');
   } else {
