@@ -2,6 +2,21 @@
 
 This is the documentation for the backend of the roommate matching application. This will include the details about the project such as routes, models, etc.
 
+## Models
+
+Documentation for database models and design
+
+### Waitroom
+
+Collection that keeps track of which users are in which user's waiting rooms
+
+| Field Name  | Data Type | Description               | Other Information |
+|-------------|-----------|---------------------------|-------------------|
+| baseUserEmail | `String` | Email of the user whose waiting room the target user belongs to | Foreign Key from USER collection |
+| targetUserEmail | `String` | Email of the user that is in the waiting room of the base user | Foreign Key from USER collection |
+
+baseUserEmail is not unique, each target user is stored in a separate document/record.
+
 ## Routes
 ___
 
