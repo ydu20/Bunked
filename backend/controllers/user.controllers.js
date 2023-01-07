@@ -22,6 +22,10 @@ exports.registerUser = async (req, res) => {
           error: errors,
         });
     }
+    
+    if (await User.findOne({email: req.body.email})) {
+      return res.status(400).json('Email is associated with another account.')
+    }
 
     // Register new user
     const email = req.body.email;
@@ -47,6 +51,21 @@ exports.loginUser = async (req, res) => {
     return res.status(400).json('Already logged in as ' + req.session.user.email);
   }
 
+  const validationErrors = validate.validationResult(req);
+  const errors = [];
+
+  if (!validationErrors.isEmpty) {
+      validationErrors.errors.forEach((error) => {
+        errors.push({param: error.param, msg: error.msg});
+      });
+  }
+
+  if (errors.length) {
+      return res.status(400).json({
+        error: errors,
+      });
+  }
+
   console.log(req.body);
 
   if (!req.body.email || !req.body.password) {
@@ -60,7 +79,10 @@ exports.loginUser = async (req, res) => {
 
 
   if (await bcrypt.compare(req.body.password, user.password)) {
-    req.session.user = {email: user.email};
+    req.session.user = {
+      email: user.email,
+      name: user.name,
+    };
     return res.json('Logged in!');
   } else {
     return res.status(400).json('Incorrect email or password.');
@@ -77,6 +99,30 @@ exports.logoutUser = async (req, res) => {
       res.json('User logged out.');
     }
   })
+}
+
+exports.getUserBio = async (req, res) => {
+  // Check for bio table
+  
+  const bio = await UserBio.findOne({email: req.body.email});
+
+  if (!bio) {
+    res.json({"notCreated": true})
+  } else {
+    res.json({
+      email: bio.email,
+      name: req.session.user.name,
+      gender: bio.gender,
+      majors: bio.majors,
+      year: bio.year,
+      ...(dorm && {dorm: bio.dorm}),
+      ...(greek && {greek: bio.greek}),
+      ...(hobbies && {hobbies: bio.hobbies}),
+      ...(hometown && {hometown: bio.hometown}),
+      ...(shows && {shows}),
+      ...(instagram && {instagram}),
+    })
+  }
 }
 
 // Create bio for user
@@ -154,7 +200,6 @@ exports.updateUserBio = async (req, res) => {
   const hometown = req.body.hometown;
   const music = req.body.music;
   const shows = req.body.shows;
-  const pictures = req.body.pictures;
   const instagram = req.body.instagram;
 
   // Embed hobbies into vectors
@@ -176,7 +221,6 @@ exports.updateUserBio = async (req, res) => {
     ...(hometown && {hometown}),
     ...(music && {music}),
     ...(shows && {shows}),
-    ...(pictures && {pictures}),
     ...(instagram && {instagram}),
     ...(hobbies_encoded && {hobbies_encoded}),
   }

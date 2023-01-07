@@ -20,12 +20,14 @@ var authorizeUser = async (req, res, next) => {
             } else {
                 return res.status(401).json('Unauthorized.')
             }
-        } else {
+        } else if (req.method == "GET") {
             if (req.query.email && req.query.email == req.session.user.email) {
                 next();
             } else {
                 return res.status(401).json('Unauthorized.')
             }
+        } else {
+            next();
         }
       } else {
         return res.status(401).json('Unauthorized.')
@@ -37,10 +39,11 @@ var authorizeUser = async (req, res, next) => {
 router.post('/register', validate.validateEmail, validate.validatePassword, userControllers.registerUser);
 router.post('/create-bio', authorizeUser, validate.checkBio, userControllers.createUserBio);
 router.post('/update-bio', authorizeUser, validate.updateBio, userControllers.updateUserBio);
+router.get('/get-bio', authorizeUser, userControllers.getUserBio);
 router.post('/profile-pic', authorizeUser, multer.saveImg, userImgControllers.uploadImage);
 router.get('/profile-pic', authorizeUser, userImgControllers.getImage);
 router.delete('/profile-pic', authorizeUser, userImgControllers.deleteImage);
-router.post('/login', userControllers.loginUser);
+router.post('/login', validate.validateEmail, userControllers.loginUser);
 router.delete('/logout', userControllers.logoutUser);
 router.get('/recommend', userControllers.recommendUsers);
 

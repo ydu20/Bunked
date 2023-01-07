@@ -2,7 +2,7 @@ const { body, checkSchema, validationResult } = require("express-validator");
 
 module.exports.validateEmail = body("email").isEmail().normalizeEmail().withMessage("Please enter a valid email address.")
 
-module.exports.validateName = body("name").isLength({min: 2, max: 50}).withMessage("Please enter a valid name.")
+module.exports.validateName = body("name").isLength({min: 1, max: 50}).withMessage("Please enter a valid name.")
 
 module.exports.validatePassword = body("password").isLength({min:8}).trim().withMessage("The password has to be at least 8 character long.");
 

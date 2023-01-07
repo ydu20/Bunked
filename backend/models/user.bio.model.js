@@ -54,7 +54,6 @@ const userBioSchema = new Schema ({
     hometown: String,
     music: [String],
     shows: [String],
-    pictures: [String],
     instagram: String,
     hobbies_encoded:[[Number]],
 });
