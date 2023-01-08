@@ -47,9 +47,9 @@ app.use(cors({origin: true, credentials: true}));
 
 // routes
 const userRoutes = require('./routes/user.routes');
-const waitroomRoutes = require('./routes/waitroom.routes');
+const actionRoutes = require('./routes/action.routes');
 app.use("/", userRoutes);
-app.use("/waitroom/", waitroomRoutes);
+app.use("/actions/", actionRoutes);
 
 // port
 const port = process.env.PORT || 8080;
