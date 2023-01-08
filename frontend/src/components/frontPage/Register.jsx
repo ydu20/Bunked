@@ -64,7 +64,12 @@ function Register({login, setLogin}) {
             && passwordError.length === 0 && confirmPW.length === 0
             && email.length !== 0 && name.length !== 0
             && password.length !== 0 && confirmPW.length !== 0) {
-            setServerError("TODO: Not implemented");
+            axios.post('/register', params).then((res) => {
+                Cookies.set('email', res.data.email, {expires: 3});
+                navigate('/home');
+            }).catch((error) => {
+                setServerError(error.response.data);
+            });
         }
     }
 

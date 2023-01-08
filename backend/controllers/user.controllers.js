@@ -39,7 +39,7 @@ exports.registerUser = async (req, res) => {
         password: hashed,
     });
 
-    newUser.save().then(() => res.json('User registered!'))
+    newUser.save().then(() => res.json({success: 'User registered!', email}))
         .catch(err => res.status(400).json('Error: ' + err));
 
 }
