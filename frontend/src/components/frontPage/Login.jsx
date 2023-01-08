@@ -1,7 +1,10 @@
-import {useRef, useEffect, useState } from 'react'
-import './Login.css'
+import {useRef, useEffect, useState } from 'react';
+import './Login.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import Register from './Register'
+import Register from './Register';
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
+
 
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +24,7 @@ function Login() {
     let [serverError, setServerError] = useState('');
 
     const emailRef = useRef();
+    const navigate = useNavigate();
 
     const validEmailRegex = RegExp(
         /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/
@@ -48,14 +52,24 @@ function Login() {
             } else {
                 setPasswordError('');
             }
-        }
+        };
     }
 
     var handleLogin = async (event) => {
         event.preventDefault();
         if (emailError.length === 0 && passwordError.length === 0
             && loginEmail.length !== 0 && loginPassword.length !== 0) {
-            setServerError("TODO: Not implemented");
+            var params = {
+                email: loginEmail,
+                password: loginPassword,
+            };
+            axios.post('/login', params).then((res) => {
+                console.log(res.data);
+                Cookies.set('email', res.data.email, {expires: 3});
+                navigate('/home');
+            }).catch((error) => {
+                setServerError(error.response.data);
+            });
         }
     }
 

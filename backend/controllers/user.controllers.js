@@ -41,16 +41,12 @@ exports.registerUser = async (req, res) => {
 
     newUser.save().then(() => res.json('User registered!'))
         .catch(err => res.status(400).json('Error: ' + err));
-    
+
 }
 
 // Login user
 exports.loginUser = async (req, res) => {
   
-  if (req.session.user) {
-    return res.status(400).json('Already logged in as ' + req.session.user.email);
-  }
-
   const validationErrors = validate.validationResult(req);
   const errors = [];
 
@@ -65,8 +61,6 @@ exports.loginUser = async (req, res) => {
         error: errors,
       });
   }
-
-  console.log(req.body);
 
   if (!req.body.email || !req.body.password) {
     return res.status(400).json('Email or password field missing.');
@@ -83,7 +77,7 @@ exports.loginUser = async (req, res) => {
       email: user.email,
       name: user.name,
     };
-    return res.json('Logged in!');
+    return res.json({success: 'Logged in!', email: user.email});
   } else {
     return res.status(400).json('Incorrect email or password.');
   }

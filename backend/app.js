@@ -12,6 +12,8 @@ const encoder = require('@tensorflow-models/universal-sentence-encoder') // to l
 // app
 const app = express();
 app.use(express.urlencoded());
+app.use(express.json());
+
 
 // db
 mongoose.connect(process.env.MONGODB_URI, {
@@ -32,7 +34,7 @@ app.use(session({
     name: 'session-id', 
     store: mongoDBstore,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 3,
+      maxAge: 1000 * 60 * 60 * 24 * 3.5,
       sameSite: 'lax',
       HTTPonly: true,
       secure: false,

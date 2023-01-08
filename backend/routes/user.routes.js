@@ -10,6 +10,7 @@ const userImgControllers = require('../controllers/user.image.controllers');
 // Middlewares
 const validate = require('../middlewares/validators');
 const multer = require('../middlewares/image.multer');
+const { restart } = require('nodemon');
 
 // Authorization function
 var authorizeUser = async (req, res, next) => {
@@ -34,6 +35,14 @@ var authorizeUser = async (req, res, next) => {
     }
 }
 
+var checkLoggedIn = async (req, res) => {
+    if (req.session.user) {
+        return res.json(req.session.user);
+    } else {
+        return res.status(401).json('Unauthorized.');
+    }
+}
+
 
 // Routes
 router.post('/register', validate.validateEmail, validate.validatePassword, userControllers.registerUser);
@@ -44,10 +53,12 @@ router.post('/profile-pic', authorizeUser, multer.saveImg, userImgControllers.up
 router.get('/profile-pic', authorizeUser, userImgControllers.getImage);
 router.delete('/profile-pic', authorizeUser, userImgControllers.deleteImage);
 router.post('/login', validate.validateEmail, userControllers.loginUser);
+router.get('/login', checkLoggedIn);
 router.delete('/logout', userControllers.logoutUser);
 router.get('/recommend', userControllers.recommendUsers);
 
-router.get('/test', authorizeUser, (req, res) => {
+router.post('/test', (req, res) => {
+    console.log(req.body);
     if (req.session.user) {
         res.json('Logged in as ' + req.session.user);
     } else {
