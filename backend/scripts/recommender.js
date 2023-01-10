@@ -1,6 +1,7 @@
 const tf = require("@tensorflow/tfjs");
 const User = require("../models/user.model");
 const UserBio = require("../models/user.bio.model");
+const Action = require("../models/action.model");
 const { kdTree } = require("kd-tree-javascript");
 const cosinedist = require("./cosinedist");
 
@@ -76,12 +77,19 @@ const dist = (a, b) => {
 // Find k nearest people to given user email out of a subset of all users.
 const findNearest = async (baseuser, k) => {
     
-    // Randomly get a subset (of about half) of the users
-    const users = await UserBio.find({$expr: {$lt: [0.5, {$rand: {}}]}})
+    // Randomly get a subset (of about 0.75, reduce this number as num users gets larger) of the users
+    const users = await UserBio.find({$expr: {$lt: [0.75, {$rand: {}}]}});
+
+    // Make sure only recommends users that have not been actioned already
+    const pairings = await Action.find({baseUserEmail: baseuser.email});
+    const actionedUsersEmails = new Set();
+    pairings.map(pairing => {actionedUsersEmails.add(pairing.targetUserEmail)});
+ 
+    const usersNew = users.filter(user => {!actionedUsersEmails.has(user.email)});
 
     // Initialize tree
     const criterion = ["extroversion", "cleanliness", "noise", "drink", "greek", "guests", "sleep", "smoke", "hobbies"];
-    const tree = new kdTree(users, dist, criterion);
+    const tree = new kdTree(usersNew, dist, criterion);
 
     // Get the k nearest people
     const nearest = tree.nearest(baseuser, k);
