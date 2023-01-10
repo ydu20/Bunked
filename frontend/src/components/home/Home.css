@@ -1,0 +1,46 @@
+.homepage-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    min-height: 700px;
+    justify-content: center;
+}
+
+.sidebar-wrapper {
+    width: 600px;
+    display: grid;
+    padding: 50px;
+    padding-right: 25px;
+}
+
+.interface-wrapper {
+    flex: 5;
+    display: grid;
+    padding: 50px;
+    padding-left: 25px;
+}
+
+.sidebar {
+    background-color: greenyellow;
+    border-radius: 20px;
+    padding: 30px;
+    min-height: 600px;
+    position: relative;
+}
+
+.interface {
+    background-color: blueviolet;
+}
+
+.home-logout {
+    position: absolute;
+    bottom: 45px;
+}
+
+.interface-inner-wrapper {
+    min-width: 1200px;
+    background-color: burlywood;
+    border-radius: 20px;
+    padding: 30px;
+    display: grid;
+}
