@@ -1,5 +1,9 @@
 import {useState } from 'react'
 import './Register.css'
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
+
+import { useNavigate } from 'react-router-dom';
 
 
 function Register({login, setLogin}) {
@@ -12,8 +16,9 @@ function Register({login, setLogin}) {
     let [nameError, setNameError] = useState("");
     let [passwordError, setPasswordError] = useState("");
     let [confirmPWError, setConfirmPWError] = useState("");
-
     let [serverError, setServerError] = useState('');
+
+    const navigate = useNavigate();
 
     const validEmailRegex = RegExp(
         /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/
@@ -64,6 +69,12 @@ function Register({login, setLogin}) {
             && passwordError.length === 0 && confirmPW.length === 0
             && email.length !== 0 && name.length !== 0
             && password.length !== 0 && confirmPW.length !== 0) {
+            
+            var params = {
+                email,
+                password,
+                name,
+            }
             axios.post('/register', params).then((res) => {
                 Cookies.set('email', res.data.email, {expires: 3});
                 navigate('/home');

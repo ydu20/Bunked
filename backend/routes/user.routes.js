@@ -14,14 +14,20 @@ const { restart } = require('nodemon');
 
 // Authorization function
 var authorizeUser = async (req, res, next) => {
+    console.log("HERE")
+    console.log(req.session.user);
     if (req.session.user && req.session.user.email) {
+        console.log(req.method);
         if (req.method === "POST") {
             if (req.body.email && req.session.user.email == req.body.email) {
                 next();
             } else {
                 return res.status(401).json('Unauthorized.')
             }
-        } else if (req.method == "GET") {
+        } else if (req.method === "GET") {
+            console.log("METHOD = GET");
+            console.log(req.session.user.email);
+            console.log(req.query.email);
             if (req.query.email && req.query.email == req.session.user.email) {
                 next();
             } else {

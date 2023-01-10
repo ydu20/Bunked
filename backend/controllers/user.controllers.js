@@ -98,9 +98,9 @@ exports.logoutUser = async (req, res) => {
 exports.getUserBio = async (req, res) => {
   // Check for bio table
   
-  const bio = await UserBio.findOne({email: req.body.email});
+  const bio = await UserBio.findOne({email: req.query.email});
 
-  if (!bio) {
+  if (!req.query.email || !bio) {
     res.json({"notCreated": true})
   } else {
     res.json({
@@ -109,12 +109,12 @@ exports.getUserBio = async (req, res) => {
       gender: bio.gender,
       majors: bio.majors,
       year: bio.year,
-      ...(dorm && {dorm: bio.dorm}),
-      ...(greek && {greek: bio.greek}),
-      ...(hobbies && {hobbies: bio.hobbies}),
-      ...(hometown && {hometown: bio.hometown}),
-      ...(shows && {shows}),
-      ...(instagram && {instagram}),
+      ...(bio.dorm && {dorm: bio.dorm}),
+      ...(bio.greek && {greek: bio.greek}),
+      ...(bio.hobbies && {hobbies: bio.hobbies}),
+      ...(bio.hometown && {hometown: bio.hometown}),
+      ...(bio.shows && {shows: bio.shows}),
+      ...(bio.instagram && {instagram: bio.instagram}),
     })
   }
 }

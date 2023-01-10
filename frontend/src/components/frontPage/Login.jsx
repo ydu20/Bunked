@@ -5,7 +5,6 @@ import Register from './Register';
 import axios from '../AxiosInstance';
 import Cookies from 'js-cookie';
 
-
 import { useNavigate } from 'react-router-dom';
 
 
