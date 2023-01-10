@@ -3,11 +3,12 @@
     flex-direction: row;
     height: 100vh;
     min-height: 700px;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .sidebar-wrapper {
-    width: 600px;
+    min-width: 600px;
+    flex: 2;
     display: grid;
     padding: 50px;
     padding-right: 25px;

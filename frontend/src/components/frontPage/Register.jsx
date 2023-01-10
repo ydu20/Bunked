@@ -66,7 +66,7 @@ function Register({login, setLogin}) {
     const handleRegister = async (event) => {
         event.preventDefault();
         if (emailError.length === 0 && nameError.length === 0
-            && passwordError.length === 0 && confirmPW.length === 0
+            && passwordError.length === 0 && confirmPWError.length === 0
             && email.length !== 0 && name.length !== 0
             && password.length !== 0 && confirmPW.length !== 0) {
             
@@ -129,7 +129,7 @@ function Register({login, setLogin}) {
                         + (passwordError.length > 0 ? "is-invalid":"")}
                     id = "register-password-input"
                     name = "password"
-                    type = "text"
+                    type = "password"
                     placeholder = "Enter your password"
                     onChange = {handleChange}
                     value = {password}
@@ -144,9 +144,9 @@ function Register({login, setLogin}) {
                 <input
                     className = {"login-register-input form-control "
                         + (confirmPWError.length > 0 ? "is-invalid":"")}
-                    id = "register-password-input"
+                    id = "register-confirm-password-input"
                     name = "confirmPW"
-                    type = "text"
+                    type = "password"
                     placeholder = "Confirm your password"
                     onChange = {handleChange}
                     value = {confirmPW}

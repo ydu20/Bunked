@@ -41,8 +41,15 @@ exports.registerUser = async (req, res) => {
         password: hashed,
     });
 
-    newUser.save().then(() => res.json({success: 'User registered!', email}))
-        .catch(err => res.status(400).json('Error: ' + err));
+    newUser.save()
+      .then(() => {
+        req.session.user = {
+          email,
+          name,
+        };
+        res.json({success: 'User registered!', email});
+      })
+      .catch(err => res.status(400).json('Error: ' + err));
 
 }
 
