@@ -83,9 +83,9 @@ const findNearest = async (baseuser, k) => {
     // Make sure only recommends users that have not been actioned already
     const pairings = await Action.find({baseUserEmail: baseuser.email});
     const actionedUsersEmails = new Set();
-    pairings.map(pairing => {actionedUsersEmails.add(pairing.targetUserEmail)});
+    pairings.map(pairing => actionedUsersEmails.add(pairing.targetUserEmail));
  
-    const usersNew = users.filter(user => {!actionedUsersEmails.has(user.email)});
+    const usersNew = users.filter(user => !actionedUsersEmails.has(user.email));
 
     // Initialize tree
     const criterion = ["extroversion", "cleanliness", "noise", "drink", "greek", "guests", "sleep", "smoke", "hobbies"];
