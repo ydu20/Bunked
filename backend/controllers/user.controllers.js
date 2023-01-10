@@ -23,12 +23,14 @@ exports.registerUser = async (req, res) => {
         });
     }
     
-    if (await User.findOne({email: req.body.email})) {
+    // Set all emails to lower case
+    const email = req.body.email.toLowerCase();
+
+    if (await User.findOne({email: email})) {
       return res.status(400).json('Email is associated with another account.')
     }
 
     // Register new user
-    const email = req.body.email;
     const name = req.body.name;
     const password = req.body.password;
     const hashed = bcrypt.hashSync(password, 10);
@@ -66,7 +68,7 @@ exports.loginUser = async (req, res) => {
     return res.status(400).json('Email or password field missing.');
   }
 
-  const user = await User.findOne({email: req.body.email});
+  const user = await User.findOne({email: req.body.email.toLowerCase()});
   if (!user) {
     return res.status(400).json("Incorrect email or password.")
   }
@@ -98,14 +100,14 @@ exports.logoutUser = async (req, res) => {
 exports.getUserBio = async (req, res) => {
   // Check for bio table
   
-  const bio = await UserBio.findOne({email: req.query.email});
+  const bio = await UserBio.findOne({email: req.query.email.toLowerCase()});
 
   if (!req.query.email || !bio) {
     res.json({"notCreated": true})
   } else {
     res.json({
       email: bio.email,
-      name: req.session.user.name,
+      name: bio.name,
       gender: bio.gender,
       majors: bio.majors,
       year: bio.year,
@@ -138,7 +140,8 @@ exports.createUserBio = async (req, res) => {
     }
 
     // create Bio    
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
+    const name = req.body.name;
     const gender = req.body.gender;
     console.log(req.body.majors)
 
@@ -150,6 +153,7 @@ exports.createUserBio = async (req, res) => {
     
     const newBio = new UserBio ({
       email,
+      name,
       gender,
       majors,
       year,
@@ -183,7 +187,7 @@ exports.updateUserBio = async (req, res) => {
   console.log(req.body);
 
   // Check if bio exists and update it
-  const email = req.body.email;
+  const email = req.body.email.toLowerCase();
   const sleep = req.body.sleep;
   const guests = req.body.guests;
   const dorm = req.body.dorm;

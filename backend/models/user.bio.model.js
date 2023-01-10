@@ -10,6 +10,12 @@ const userBioSchema = new Schema ({
         trim: true,
         minlength: 5,
     }, 
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+    },
     gender: {
         type: String,
         required: true,
