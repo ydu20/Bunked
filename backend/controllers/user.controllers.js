@@ -146,9 +146,17 @@ exports.createUserBio = async (req, res) => {
         });
     }
 
-    // create Bio    
+    // Check if email is a registered user and also get user's name
     const email = req.body.email.toLowerCase();
-    const name = req.body.name;
+
+    var user = User.findOne({email});
+    
+    if (!user) {
+      return res.states(400).json('Error: user not found');
+    }
+
+    // create Bio    
+    const name = user.name;
     const gender = req.body.gender;
     console.log(req.body.majors)
 
