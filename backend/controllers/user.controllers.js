@@ -253,7 +253,8 @@ exports.recommendUsers = async (req, res) => {
     return res.status(400).json("User bio not completed");
   }
 
-  const nearestUsers = await recommender.findNearest(baseuserbio, 10); // Can change the number in the second parameter to get larger/smaller number of recommendations
+  let nearestUsers = await recommender.findNearest(baseuserbio, 10); // Can change the number in the second parameter to get larger/smaller number of recommendations
+  nearestUsers = nearestUsers.map(userArr => userArr[0])
 
   res.json(nearestUsers);
 }
