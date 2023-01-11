@@ -17,7 +17,7 @@ function Home() {
 
     useEffect(() => {
 
-        const temp = () => {
+        const init = () => {
             axios.get(`/get-bio?email=${encodeURIComponent(Cookies.get('email'))}`)
             .then(async (res) => {
                 setBio(res.data);
@@ -30,7 +30,7 @@ function Home() {
             })
         };
 
-        temp();
+        init();
         
     }, []);
 
@@ -73,7 +73,7 @@ function Home() {
                     <div className = "interface-wrapper">
                         <div className = "interface-inner-wrapper">
                             { displayMatching ? 
-                                <Matching /> : ""
+                                <Matching baseEmail={Cookies.get('email')}/> : ""
                             }
                         </div>
                     </div>
