@@ -177,12 +177,12 @@ const addToWaitingRoom = async (req, res) => {
 }
 
 // Add a user to a given user's waiting room
-// Input URL params: req.body.baseEmail  email of base user, req.body.targetEmail email of removed user
+// Input body content: req.body.baseEmail  email of base user, req.body.targetEmail email of removed user
 const removeFromWaitingRoom = async (req, res) => {
     const baseUserEmail = req.body.baseEmail;
     const targetUserEmail = req.body.targetEmail;
 
-    // Check if both user's exist
+    // Check if both users exist
     const baseUser = await User.findOne({email: baseUserEmail});
     const targetUser = await User.findOne({email: targetUserEmail});
 
@@ -199,6 +199,30 @@ const removeFromWaitingRoom = async (req, res) => {
     }
 }
 
+// Route to check if two users match
+// Input URL params: req.query.firstEmail email of first user, req.query.secEmail email of second user
+const checkMatch = async (req, res) => {
+    const firstEmail = req.query.firstEmail;
+    const secEmail = req.query.secEmail;
+
+    // Check if both users exist
+    const user1 = await User.findOne({email: firstEmail});
+    const user2 = await User.findOne({email: secEmail});
+
+    if (!user1 || !user2) {
+        return res.status(404).json('User does not exist');
+    }
+
+    const checkNum = await Action.count({$or: [{baseUserEmail: firstEmail, targetUserEmail: secEmail}, {baseUserEmail: secEmail, targetUserEmail: firstEmail}]});
+
+    if (checkNum < 2) {
+        return res.json(false);
+    } else {
+        return res.json(true);
+    }
+
+}
+
 module.exports = {
     getAccepted,
     acceptUser,
@@ -207,4 +231,5 @@ module.exports = {
     getUsersInWaitingRoom,
     addToWaitingRoom,
     removeFromWaitingRoom,
+    checkMatch,
 }

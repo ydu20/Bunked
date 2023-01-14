@@ -16,5 +16,7 @@ router.get('/getWaitUsers', actionController.getUsersInWaitingRoom); // Get all 
 router.post('/addUserWait', actionController.addToWaitingRoom); // Add a user to waiting room
 router.delete('/removeUserWait', actionController.removeFromWaitingRoom); // Remove user from waiting room
 
+router.get('/checkMatch', actionController.checkMatch); // Route to check if two users match
+
 
 module.exports = router;
