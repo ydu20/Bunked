@@ -77,7 +77,7 @@ const dist = (a, b) => {
 // Find k nearest people to given user email out of a subset of all users.
 const findNearest = async (baseuser, k) => {
     
-    // Randomly get a subset (of about 0.75, reduce this number as num users gets larger) of the users
+    // Randomly get a subset (of about 0.6, reduce this number as num users gets larger) of the users
     const users = await UserBio.find({$expr: {$lt: [0.75, {$rand: {}}]}});
 
     // Make sure only recommends users that have not been actioned already
