@@ -24,6 +24,21 @@ function Waitroom({baseEmail}) {
         init();
     }, [])
 
+    // Function to accept a user off waitlist
+    // targetEmail is the email of the person being accepted
+    const acceptUser = async (targetEmail) => {
+        await axios.post('/actions/updateUserWait', {baseEmail: baseEmail, targetEmail: targetEmail, actionType: 0});
+        const newUserArr = roomUsers.filter(user => user.email !== targetEmail);
+        setRoomUsers(newUserArr);
+    }
+
+    // Function to reject user off waitlist
+    // targetEmail is the email of the person being rejected
+    const rejectUser = async (targetEmail) => {
+        await axios.post('/actions/updateUserWait', {baseEmail: baseEmail, targetEmail: targetEmail, actionType: 2});
+        const newUserArr = roomUsers.filter(user => user.email !== targetEmail);
+        setRoomUsers(newUserArr);
+    }
 
     return (
         <>
@@ -36,8 +51,8 @@ function Waitroom({baseEmail}) {
                         <div className='singleUserDiv'>
                             <p>{user.name}</p>
                             <p>{user.email}</p>
-                            <button>Accept</button>
-                            <button>Reject</button>
+                            <button onClick={() => {acceptUser(user.email)}}>Accept</button>
+                            <button onClick={() => {rejectUser(user.email)}}>Reject</button>
                         </div>
                         <hr></hr>
                         </>

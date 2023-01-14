@@ -220,6 +220,22 @@ const checkMatch = async (req, res) => {
     } else {
         return res.json(true);
     }
+}
+
+// Route to either accept or reject a user from the waiting room
+// Input body: req.body.baseEmail email of base user, req.body.targetEmail email of target, req.body.actionType type of action, 0 for accept, 2 for reject
+const updateUserWait = async (req, res) => {
+    const baseUserEmail = req.body.baseEmail;
+    const targetUserEmail = req.body.targetEmail;
+    const actionType = req.body.actionType;
+
+    const check = await Action.count({baseUserEmail: baseUserEmail, targetUserEmail: targetUserEmail, actionType: 1});
+    if (check === 0) {
+        return res.status(404).json('No user in waiting room');
+    }
+
+    await Action.updateOne({baseUserEmail: baseUserEmail, targetUserEmail: targetUserEmail, actionType: 1}, {$set: {actionType: actionType}});
+    res.status(200).json('Update successful');
 
 }
 
@@ -232,4 +248,5 @@ module.exports = {
     addToWaitingRoom,
     removeFromWaitingRoom,
     checkMatch,
+    updateUserWait,
 }
