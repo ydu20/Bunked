@@ -1,13 +1,11 @@
 import {useEffect, useState} from 'react';
+import './CreateBio.css';
 import axios from '../AxiosInstance';
 import Cookies from 'js-cookie';
 import { useNavigate, Navigate, useLocation} from 'react-router-dom';
+import CreateBioQuestion from './CreateBioQuestion';
 
 function CreateProfile() {
-
-    const navigate = useNavigate();
-    const {state} = useLocation();
-
 
     var questions = [
         {
@@ -27,7 +25,7 @@ function CreateProfile() {
             type: "string",
             structure: "input",
             private: false,
-            multiple: false,
+            multiple: true,
             options: [],
         },
         {
@@ -100,10 +98,102 @@ function CreateProfile() {
             multiple: true,
             options: ["Quad", "Hill", "KCECH", "DuBois", "High Rises", "Off Campus"],
         },
-
-
+        {
+            param: "greek",
+            question: "Do you plan on joining greek life?",
+            required: false,
+            type: "number",
+            structure: "options",
+            private: false,
+            multiple: false,
+            options: ["Nope", "Prob not", "Maybe", "Considering it", "Yes"],
+        }, 
+        {
+            param: "smoke",
+            question: "Do you smoke?",
+            required: false,
+            type: "number",
+            structure: "options",
+            private: true,
+            multiple: false,
+            options: ["Never", "Socially", "Yes"],
+        }, 
+        {
+            param: "drink",
+            question: "Do you drink?",
+            required: false,
+            type: "number",
+            structure: "options",
+            private: true,
+            multiple: false,
+            options: ["Never", "Socially", "Yes"]
+        },
+        {
+            param: "hobbies",
+            question: "What are your hobbies?",
+            required: false,
+            type: "string",
+            structure: "input",
+            private: false,
+            multiple: true,
+            options: [],
+        },
+        {
+            param: "hometown",
+            question: "Where do you call home?",
+            required: false,
+            type: "string",
+            structure: "input",
+            private: false,
+            multiple: false,
+            options: [],
+        },
+        {
+            param: "music",
+            question: "Favorite music genres?",
+            required: false,
+            type: "string",
+            structure: "input",
+            private: false,
+            multiple: true,
+            options: [],
+        },
+        {
+            param: "shows",
+            question: "Favorite TV shows?",
+            required: false,
+            type: "string",
+            structure: "input",
+            private: false,
+            multiple: true,
+            options: [],
+        },
+        {
+            param: "instagram",
+            question: "What's your instagram?",
+            required: false,
+            type: "string",
+            structure: "input",
+            private: false,
+            multiple: false,
+            options: [],
+        }
     ]
 
+    const navigate = useNavigate();
+    const {state} = useLocation();
+    
+    var [questionNum, setQuestionNum] = useState(0);
+    
+    var input = {};
+
+    var [ans, setAns] = useState("");
+    var [listAns, setListAns] = useState([]);
+
+    var answer = {
+        ans, setAns,
+        listAns, setListAns,
+    };
 
     useEffect (() => {
 
@@ -116,15 +206,71 @@ function CreateProfile() {
         });
     }
 
+    const resetAns = () => {
+        setAns("");
+        setListAns([]);
+    }
+
+    const prevQ = async () => {
+        setQuestionNum(questionNum - 1);
+        console.log(answer);
+        resetAns();
+    }
+
+    const nextQ = async () => {
+        setQuestionNum(questionNum + 1);
+        console.log(answer);
+        resetAns();
+    }
+
+    const submit = async () => {
+
+    }
+
     // Disabled for development:
     // if (!state || !state.internal) {
     //     return <Navigate to = '/'/>;
     // } else {
         return (
-            <div>
-                <h1>Create Bio</h1>
+            <div className = 'create-bio-wrapper'>
+                <h1 className = "create-bio-title">Create Bio</h1>
+                { Cookies.get('email') ? "" : <h1>Not Logged In!</h1> }
+                
+                <div className = "q-wrapper">
+                    <CreateBioQuestion 
+                        question = {questions[questionNum]}
+                        answer = {answer}
+                    />
+                </div>
+                
+                {/* <button onClick = {logout}>Logout</button> */}
 
-                <button onClick = {logout}>Logout</button>
+                <div className = "bio-btn-container">
+                    <div className = "bl-btn-wrapper">
+                        {questionNum === 0 ? 
+                            ""
+                            :
+                            <button className = "bio-question-btn" 
+                                onClick = {prevQ}>
+                                Back
+                            </button>
+                        }
+                    </div>
+                    <div className = "br-btn-wrapper">
+                        {questionNum === questions.length - 1 ? 
+                            <button className = "bio-question-btn"
+                                onClick = {submit}>
+                                Submit
+                            </button>
+                            :
+                            <button className = "bio-question-btn"
+                                onClick = {nextQ}>
+                                Next
+                            </button>
+                        }
+                    </div>
+                    
+                </div>
             </div>
         )
     // }
