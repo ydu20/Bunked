@@ -174,3 +174,44 @@ Body:
 |-------|------|--------     |
 | baseEmail | `string` | Email of the base user|
 | targetEmail | `string` | Email of the target user|
+
+#### **Update Waiting Room**
+
+Route that updates the status of a user that is currently in the waiting room, updates it to either accept or reject
+
+| URL          | Method |
+|--------------|--------|
+| `/actions/updateUserWait` | `POST`  |
+
+***Required Params***:
+
+Body:
+
+| Key   | Type | Description |
+|-------|------|--------     |
+| baseEmail | `string` | Email of the base user|
+| targetEmail | `string` | Email of the target user|
+| actionType | `Number` | Type of action updated to, 0 for accept, 2 for reject |
+
+#### **Check for Match**
+
+Route that checks if two users are matched or not
+
+| URL          | Method |
+|--------------|--------|
+| `/actions/checkMatch` | `GET`  |
+
+***Required Params***
+
+URL params:
+
+| Key   | Type | Description |
+|-------|------|--------     |
+| firstEmail | `string` | Email of the first user|
+| secEmail | `string` | Email of the second user|
+
+Note that the order of the emails does not matter
+
+***Returns:***
+
+Returns `true` if the both users accepted each other, `false` otherwise.
