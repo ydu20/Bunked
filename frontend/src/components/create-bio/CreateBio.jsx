@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './CreateBio.css';
 import axios from '../AxiosInstance';
 import Cookies from 'js-cookie';
@@ -93,7 +93,7 @@ function CreateProfile() {
             question: "Where do you plan on living?",
             required: false,
             type: "string",
-            structure: "options",
+            structure: "input",
             private: false,
             multiple: true,
             options: ["Quad", "Hill", "KCECH", "DuBois", "High Rises", "Off Campus"],
@@ -185,15 +185,15 @@ function CreateProfile() {
     
     var [questionNum, setQuestionNum] = useState(0);
     
-    var input = {};
 
-    var [ans, setAns] = useState("");
-    var [listAns, setListAns] = useState([]);
 
-    var answer = {
-        ans, setAns,
-        listAns, setListAns,
-    };
+    // var [ans, setAns] = useState("");
+    // var [listAns, setListAns] = useState([]);
+
+    // var answer = {
+    //     ans, setAns,
+    //     listAns, setListAns,
+    // };
 
     useEffect (() => {
 
@@ -206,21 +206,23 @@ function CreateProfile() {
         });
     }
 
-    const resetAns = () => {
-        setAns("");
-        setListAns([]);
-    }
+    const childRefs = useRef([]);
+
+    // const resetAns = () => {
+    //     setAns("");
+    //     setListAns([]);
+    // }
 
     const prevQ = async () => {
+        console.log(childRefs.current[questionNum].getAns());
         setQuestionNum(questionNum - 1);
-        console.log(answer);
-        resetAns();
+        // resetAns();
     }
 
     const nextQ = async () => {
         setQuestionNum(questionNum + 1);
-        console.log(answer);
-        resetAns();
+        console.log(childRefs.current[questionNum].getAns());
+        // resetAns();
     }
 
     const submit = async () => {
@@ -237,10 +239,33 @@ function CreateProfile() {
                 { Cookies.get('email') ? "" : <h1>Not Logged In!</h1> }
                 
                 <div className = "q-wrapper">
-                    <CreateBioQuestion 
+                    {/* <CreateBioQuestion 
                         question = {questions[questionNum]}
                         answer = {answer}
-                    />
+                    /> */}
+                    {questions.map((question, key) => {
+                        if (key === questionNum) {
+                            return (
+                                <CreateBioQuestion
+                                    ref = {e => (childRefs.current[key] = e)}
+                                    question = {question}
+                                    // bio = {bio}
+                                    className = {"bio-question bio-question-open"}
+                                    key = {key}
+                                />
+                            );
+                        } else {
+                            return (
+                                <CreateBioQuestion
+                                    ref = {e => (childRefs.current[key] = e)}
+                                    question = {question}
+                                    // bio = {bio}
+                                    className = {"bio-question bio-question-closed"}
+                                    key = {key}
+                                />
+                            );
+                        }
+                    })}
                 </div>
                 
                 {/* <button onClick = {logout}>Logout</button> */}

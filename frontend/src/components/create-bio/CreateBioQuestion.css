@@ -1,0 +1,46 @@
+.bio-question {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bio-question-closed {
+    display: none;
+}
+
+.bio-q-str {
+    margin-bottom: 10px;
+}
+
+.slider-container {
+    margin-left: -200px;
+    width: 700px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.slider-wrapper {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.slider-tags {
+    font-weight: bold;
+}
+
+datalist {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.slider-reversed {
+    direction: rtl;
+}
