@@ -35,7 +35,7 @@ function Matching({baseEmail, userArr, lastIndex, setLastIndex, resetRecommend})
 
     // Method to check if there is a match between the newly accepted user and current user, and handle the match if there is
     const handleMatch = async () => {
-        const match = (await axios.get('/checkMatch', {params: {firstEmail: baseEmail, secEmail: userArr[index].email}})).data; // Check if there is a match between the newly accepted user
+        const match = (await axios.get('/actions/checkMatch', {params: {firstEmail: baseEmail, secEmail: userArr[index].email}})).data; // Check if there is a match between the newly accepted user
         if (match) {
             alert("Matched!");
             // TODO: Handle the match here, create new chat room/send new message
