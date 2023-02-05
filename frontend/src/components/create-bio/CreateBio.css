@@ -3,17 +3,12 @@
     top: 10px;
 }
 
-/* .bio-btn-container {
-    position: absolute;
-    bottom: 20px;
-
-} */
-
 .create-bio-wrapper {
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: #A2E0DF;
 }
 
 .q-wrapper {
@@ -42,6 +37,17 @@
     margin-right: 50px;
 }
 
-.bio-question-btn {
+.bio-error-msg {
+    margin-top: 20px;
+    color: red;
+    font-size: 20px;
+}
 
+.bio-question-btn {
+    background-color: #21AAAC;
+    color: white !important;
+}
+
+#bio-skip-btn {
+    margin-right: 20px;
 }

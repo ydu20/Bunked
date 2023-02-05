@@ -1,5 +1,5 @@
 .bio-question {
-    width: 300px;
+    width: 400px;
     display: flex;
     flex-direction: column;
 }
@@ -10,27 +10,42 @@
 
 .bio-q-str {
     margin-bottom: 10px;
+    font-size: 20px;
 }
 
 .slider-container {
-    margin-left: -200px;
-    width: 700px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: center;
+    width: 1200px;
+    margin-left: -400px;
+    margin-top: 20px;
 }
 
 .slider-wrapper {
-    flex: 2;
     display: flex;
     flex-direction: column;
-    margin-left: 20px;
-    margin-right: 20px;
+    padding-left: 0px;
+    padding-right: 0px;
+    width: 400px;
 }
 
-.slider-tags {
+.slider-tag-left {
     font-weight: bold;
+    margin-right: 20px;
+    margin-left: 20px;
 }
+
+.slider-tag-right {
+    font-weight: bold;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.slider-tag-left > span {margin-right: auto}
+
+.slider-tag-right > span {margin-left: auto}
+
 
 datalist {
     display: flex;
@@ -44,3 +59,4 @@ datalist {
 .slider-reversed {
     direction: rtl;
 }
+

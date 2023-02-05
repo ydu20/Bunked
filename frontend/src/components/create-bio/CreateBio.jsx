@@ -184,16 +184,9 @@ function CreateProfile() {
     const {state} = useLocation();
     
     var [questionNum, setQuestionNum] = useState(0);
-    
 
-
-    // var [ans, setAns] = useState("");
-    // var [listAns, setListAns] = useState([]);
-
-    // var answer = {
-    //     ans, setAns,
-    //     listAns, setListAns,
-    // };
+    var [filled, setFilled] = useState(false);
+    var [error, setError] = useState("");
 
     useEffect (() => {
 
@@ -208,25 +201,73 @@ function CreateProfile() {
 
     const childRefs = useRef([]);
 
-    // const resetAns = () => {
-    //     setAns("");
-    //     setListAns([]);
-    // }
-
     const prevQ = async () => {
         console.log(childRefs.current[questionNum].getAns());
+        console.log(childRefs.current[questionNum].getListAns());
+
         setQuestionNum(questionNum - 1);
+        setError("");
         // resetAns();
     }
 
     const nextQ = async () => {
+        if (questions[questionNum].type === "string") {
+            if ((questions[questionNum].multiple && childRefs.current[questionNum].getListAns().length === 0) ||
+                (!questions[questionNum].multiple && childRefs.current[questionNum].getAns().length === 0)) {
+                    // if (!questions[questionNum].required) {
+                    //     return skipQ();
+                    // } else {
+                        return setError("Please enter an input.");
+                    // }
+            }
+        }
+
+        childRefs.current[questionNum].setSkip(false);
         setQuestionNum(questionNum + 1);
+        setError("");
+
         console.log(childRefs.current[questionNum].getAns());
+        console.log(childRefs.current[questionNum].getListAns());
+
         // resetAns();
     }
 
-    const submit = async () => {
+    const skipQ = async () => {
+        childRefs.current[questionNum].setSkip(true);
+        if (questionNum === questions.length - 1) {
+            return submit();
+        }
+        setError("");
+        setQuestionNum(questionNum + 1);
+    }
 
+    const submit = async () => {
+        var bioInfo = {};
+        questions.map((q, index) => {
+            var curr = childRefs.current[index]
+            if (!curr.getSkip()) {
+                if (q.structure === "sleepSpecial") {
+                    bioInfo[q.param] = {
+                        start: parseInt(curr.getListAns()[0]),
+                        end: parseInt(curr.getListAns()[1]),
+                    }
+                } else if (q.multiple) {
+                    bioInfo[q.param] = curr.getListAns();
+                } else if (q.type === "number") {
+                    bioInfo[q.param] = parseInt(curr.getAns());
+                } else if (q.type === "string") {
+                    bioInfo[q.param] = curr.getAns();
+                }
+            }
+        });
+
+        
+        bioInfo["email"] = Cookies.get('email');
+        axios.post('/create-bio', bioInfo).then((res) => {
+            console.log(res.data)
+        }).catch((error) => {
+            console.log(error.response.data);
+        });
     }
 
     // Disabled for development:
@@ -235,7 +276,6 @@ function CreateProfile() {
     // } else {
         return (
             <div className = 'create-bio-wrapper'>
-                <h1 className = "create-bio-title">Create Bio</h1>
                 { Cookies.get('email') ? "" : <h1>Not Logged In!</h1> }
                 
                 <div className = "q-wrapper">
@@ -266,6 +306,12 @@ function CreateProfile() {
                             );
                         }
                     })}
+                    {error.length === 0 ? 
+                        ""
+                        :
+                        <div className = "bio-error-msg">{error}</div>
+                    }
+
                 </div>
                 
                 {/* <button onClick = {logout}>Logout</button> */}
@@ -275,26 +321,36 @@ function CreateProfile() {
                         {questionNum === 0 ? 
                             ""
                             :
-                            <button className = "bio-question-btn" 
+                            <button className = "bio-question-btn btn btn-info btn-lg" 
                                 onClick = {prevQ}>
                                 Back
                             </button>
                         }
                     </div>
                     <div className = "br-btn-wrapper">
+                        {questions[questionNum].required ? 
+                            ""
+                            :
+                            <button className = "bio-question-btn btn btn-info btn-lg" id = "bio-skip-btn"
+                                onClick = {skipQ}>
+                                Skip
+                            </button>
+                    
+                        }
+                        
                         {questionNum === questions.length - 1 ? 
-                            <button className = "bio-question-btn"
+                            <button className = "bio-question-btn btn btn-info btn-lg"
                                 onClick = {submit}>
                                 Submit
                             </button>
                             :
-                            <button className = "bio-question-btn"
+                            <button className = "bio-question-btn btn btn-info btn-lg"
                                 onClick = {nextQ}>
                                 Next
                             </button>
+                            
                         }
                     </div>
-                    
                 </div>
             </div>
         )

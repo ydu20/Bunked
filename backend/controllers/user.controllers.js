@@ -130,52 +130,57 @@ exports.getUserBio = async (req, res) => {
 
 // Create bio for user
 exports.createUserBio = async (req, res) => {
-    // Check if params meet validation requirements
-    const validationErrors = validate.validationResult(req);
-    const errors = [];
+  // Check if params meet validation requirements
+  const validationErrors = validate.validationResult(req);
+  const errors = [];
 
-    if (!validationErrors.errors.isEmpty) {
-        validationErrors.errors.forEach((error) => {
-          errors.push({param: error.param, msg: error.msg});
-        });
-    }
+  if (!validationErrors.errors.isEmpty) {
+      validationErrors.errors.forEach((error) => {
+        errors.push({param: error.param, msg: error.msg});
+      });
+  }
 
-    if (errors.length) {
-        return res.status(400).json({
-          error: errors,
-        });
-    }
+  if (errors.length) {
+      return res.status(400).json({
+        error: errors,
+      });
+  }
 
-    // Check if email is a registered user and also get user's name
-    const email = req.body.email.toLowerCase();
+  // Check if email is a registered user and also get user's name
+  const email = req.body.email.toLowerCase();
 
-    var user = User.findOne({email});
-    
-    if (!user) {
-      return res.states(400).json('Error: user not found');
-    }
+  var user = await User.findOne({email});
+  
+  if (!user) {
+    return res.status(400).json('Error: user not found');
+  }
 
-    // create Bio    
-    const name = user.name;
-    const gender = req.body.gender;
-    console.log(req.body.majors)
+  if (await UserBio.findOne({email})) {
+    return res.status(400).json('Error: Bio already exists');
+  }
 
-    const majors = req.body.majors;
-    const year = req.body.year;
-    const extroversion = req.body.extroversion;
-    const cleanliness = req.body.cleanliness;
-    const noise = req.body.noise;
-    
-    const newBio = new UserBio ({
-      email,
-      name,
-      gender,
-      majors,
-      year,
-      extroversion,
-      cleanliness,
-      noise,
+  // create Bio    
+  const name = user.name;
+  const gender = req.body.gender;
+
+
+  const majors = req.body.majors;
+  const year = req.body.year;
+  const extroversion = req.body.extroversion;
+  const cleanliness = req.body.cleanliness;
+  const noise = req.body.noise;
+  
+  const newBio = new UserBio ({
+    email,
+    name,
+    gender,
+    majors,
+    year,
+    extroversion,
+    cleanliness,
+    noise,
   });
+  
 
   newBio.save().then(() => res.json('Bio Created!'))
       .catch(err => res.status(400).json('Error: ' + err));
@@ -241,7 +246,6 @@ exports.updateUserBio = async (req, res) => {
   UserBio.findOneAndUpdate(filter, update)
     .then(() => res.json('Bio Updated!'))
     .catch(err => res.status(400).json('Error: ' + err));
-
 }
 
 // Function that gives (10) recommendations based on nearest neighbors

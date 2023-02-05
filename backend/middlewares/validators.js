@@ -16,8 +16,8 @@ module.exports.checkBio = checkSchema({
     gender: {
         custom: {
             options: val => {
-                return (val == "male" || val == "female" ||
-                    val == "other" || val == "pnts");
+                return (val == "Male" || val == "Female" ||
+                    val == "Other" || val == "Prefer not to say");
             }
         },
         errorMessage: 'Gender field error',

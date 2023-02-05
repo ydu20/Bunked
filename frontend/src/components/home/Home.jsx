@@ -14,7 +14,7 @@ function Home() {
     const [loading, setLoading] = useState(true);
     const [bio, setBio] = useState({});
 
-    const [displayMode, setDisplayMode] = useState(0); // 0 for matching, 1 for chat, 2 for waiting room
+    const [displayMode, setDisplayMode] = useState(0); // 0 for matching, 1 for waiting room, 2 for chat
 
     const [recommendedUsers, setRecommendedUsers] = useState([]); // Recommended users
 
