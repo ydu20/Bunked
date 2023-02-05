@@ -1,6 +1,8 @@
 .input-list-item-1 {
     display: inline-block;
     border: 1px solid rgb(180, 180, 180);
+    background-color: #21AAAC;
+    color: white;
     border-radius: 5px;
     padding-left: 5px;
     padding-right: 5px;
