@@ -1,11 +1,9 @@
-import {useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import './FrontPage.css';
 import bunkedLogo from '../../BunkedLogo.png';
 import Login from './Login';
 import { Navigate } from 'react-router-dom';
-import {Box, Grid, Paper, Stack, TextField} from '@mui/material';
-import Button from '@mui/material/Button';
+import {Grid} from '@mui/material';
 
 
 const outerGridStyle =  {
@@ -107,43 +105,6 @@ function FrontPage() {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Grid container sx={innerGridStyle}>
-                            {/* <Paper sx = {loginPanelStyle}>
-                                <Stack spacing = '26px'>
-                                    <Box sx = {loginTitleStyle}>
-                                        Login
-                                    </Box>
-                                    <TextField
-                                        id="login-email"
-                                        label="Email"
-                                        fullWidth
-                                        sx = {textBoxStyle}
-                                    />
-                                    <TextField
-                                        id="login-password"
-                                        label="Password"
-                                        type="password"
-                                        fullWidth
-                                        sx = {textBoxStyle}
-                                    />
-                                    <Button
-                                        variant = 'contained'
-                                        sx = {buttonStyle}
-                                        disableRipple
-                                    >
-                                        Login
-                                    </Button>
-                                    <Box
-                                        sx = {{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        Register
-                                    </Box>
-                                </Stack>
-                            </Paper> */}
-                            
                             <Login/>
                         </Grid>
                     </Grid>

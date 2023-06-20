@@ -21,7 +21,23 @@ const theme = createTheme({
                     boxShadow: '0px 0px 5px 0px rgba(0, 0, 0, 0.1)',
                 }
             }
-        }
+        },
+        MuiSlider:{
+            styleOverrides: {
+                thumb: {
+                    '&.Mui-focused, &.Mui-activated, &.Mui-jumped, &:hover': {
+                        boxShadow:'none',
+                    },
+                    ' &.Mui-focusVisible': {
+                        boxShadow:'none',
+                    },
+                    ' &.Mui-active': {
+                        boxShadow:'none',
+                    },
+                  }
+            }
+            
+        },
     }
 });
 
