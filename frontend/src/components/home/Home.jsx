@@ -6,6 +6,7 @@ import axios from '../AxiosInstance';
 import { useNavigate } from 'react-router-dom';
 import Matching from "../matching/Matching";
 import Waitroom from '../waitroom/Waitroom';
+import Matches from "../matches/Matches";
 
 
 function Home() {
@@ -70,7 +71,7 @@ function Home() {
     } else if (!loading) {
         if (bio.err) {
             return <Navigate to = "/"/>;
-        } 
+        }
         // Disabled for development:
         // else if (bio.notCreated) {
         //     return <Navigate to = '/create-bio' state = {{internal: true}}/>;
@@ -93,6 +94,8 @@ function Home() {
                             <button className = "chat-toggle" onClick = {() => {setDisplayMode(2)}}>Chat</button>
 
                             <button className = "home-logout" onClick = {logout}>Logout</button>
+
+                            <Matches baseEmail={Cookies.get('email')}/>
                         </div>
                     </div>
                     <div className = "interface-wrapper">
