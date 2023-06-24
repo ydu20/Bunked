@@ -3,25 +3,33 @@ import {useState } from 'react';
 import {Box, TextField} from '@mui/material';
 import Chip from '@mui/material/Chip';
 
-// import InputList from '../input-list/InputList';
 
-
-function QuestionTextboxMult() {
+function QuestionTextbox({label, multiple, question, isPrivate, changeAnswer}) {
 
     let [textList, setTextList] = useState([]);
     let [textInput, setTextInput] = useState("");
 
-    var addTextInput = () => {
+    const addTextInput = () => {
         if (textInput.trim() !== '') {
-            setTextList(textList.concat(textInput));
+            var newList = textList.concat(textInput)
+            if (!multiple) {
+                newList = [textInput];
+            }
+            setTextList(newList);
+            updateAnswer(newList)
             setTextInput("");
         }
     }
 
-    function deleteItem(i) {
+    const deleteItem = (i) => {
         let tmp = [...textList];
         tmp.splice(i, 1);
         setTextList(tmp);
+        updateAnswer(tmp);
+    }
+
+    const updateAnswer = (ans) => {
+        changeAnswer(label, ans);
     }
 
     // ********************* Styling **********************
@@ -60,8 +68,15 @@ function QuestionTextboxMult() {
 
     return (
         <Box fullWidth>
-            <Box fontSize='17px' marginBottom='18px'>
-                What is your major?
+            <Box fontSize = '17px' marginBottom={isPrivate ? '10px' : '18px'}>
+                <Box>
+                    {question}
+                </Box>
+                {isPrivate ? (
+                    <Box color = 'gray' fontSize = '14px'>
+                        Only you will see the answer to this question
+                    </Box>
+                ): ""}
             </Box>
 
             <TextField
@@ -71,16 +86,16 @@ function QuestionTextboxMult() {
                     setTextInput(e.target.value);
                 }}
                 onKeyDown = {(e) => {
-                    (e.key === "Enter" || e.key === ',' 
-                        || e.key === '.' || e.key === ';') && addTextInput();
+                    (e.key === "Enter") && addTextInput();
                 }}
                 value = {textInput}
             />
 
-            {/* <InputList 
-                list = {textList}
-                setList = {setTextList}
-            /> */}
+            {textList.length === 0 ? (
+                <Box marginTop = {'10px'} color = 'grey'>
+                    Press enter to update
+                </Box>
+            ) : ""}
 
             <Box paddingLeft = '3px'>
                 {textList.map((x, key) => (
@@ -98,4 +113,4 @@ function QuestionTextboxMult() {
     )
 }
 
-export default QuestionTextboxMult;
+export default QuestionTextbox;

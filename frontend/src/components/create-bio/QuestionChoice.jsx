@@ -1,9 +1,23 @@
+import {useState } from 'react';
+
 import {Box} from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 
-function QuestionChoice() {
+function QuestionChoice({label, question, isPrivate, options, changeAnswer}) {
+
+    // ********************* Variables & Functions **********************
+
+    var [selection, setSelection] = useState('');
+
+    const handleSelectionChange = (event) => {
+        setSelection(event.target.value);
+        changeAnswer(label, [event.target.value]);
+    }
+
+
+    // ********************* Styling **********************
 
     const selectStyle = {
         '& .MuiSelect-select': {
@@ -35,7 +49,6 @@ function QuestionChoice() {
                             display: 'none',
                         },
                     },
-                    
                 },
             }
         },
@@ -43,25 +56,29 @@ function QuestionChoice() {
 
     return (
         <Box fullWidth>
-            <Box fontSize = '17px' marginBottom='18px'>
-                What is your gender?
+            <Box fontSize = '17px' marginBottom={isPrivate ? '12px' : '18px'}>
+                <Box>
+                    {question}
+                </Box>
+                {isPrivate ? (
+                    <Box color = 'gray' fontSize = '14px'>
+                        Only you will see the answer to this question
+                    </Box>
+                ): ""}
             </Box>
-
             <Select
                 id='bio-gender'
                 fullWidth
                 sx = {selectStyle}
                 MenuProps = {menuStyle}
+                value = {selection}
+                onChange = {handleSelectionChange}
             >
-                <MenuItem value={10}>
-                    Male
-                </MenuItem>
-                <MenuItem value={20}>
-                    Female
-                </MenuItem>
-                <MenuItem value = {30}>
-                    Other
-                </MenuItem>
+                {options.map( (opt, index) => (
+                    <MenuItem key = {index} value = {opt}>
+                        {opt}
+                    </MenuItem>
+                ))}
             </Select>
         </Box>
     )

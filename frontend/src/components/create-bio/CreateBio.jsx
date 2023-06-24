@@ -362,13 +362,10 @@
 
 
 import {useRef, useEffect, useState } from 'react';
-import {Box, Button, Grid, Paper, Stack, TextField} from '@mui/material';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Slider from '@mui/material/Slider';
+import {Box, Button, Grid, Paper, Stack} from '@mui/material';
 
 import QuestionChoice from './QuestionChoice'
-import QuestionTextboxMult from './QuestionTextboxMult'
+import QuestionTextbox from './QuestionTextbox'
 import QuestionSlider from './QuestionSlider'
 import QuestionRange from './QuestionRange'
 
@@ -376,8 +373,258 @@ function CreateProfile() {
 
     // ********************* Variables & Functions **********************
 
+    var questions = [
+        {
+            label: "gender",
+            question: "What is your gender?",
+            required: true,
+            type: "choice",
+            private: false,
+            options: ["Male", "Female", "Other"],
+        },
+        {
+            label: "majors",
+            question: "What is/are your majors?",
+            required: true,
+            type: "textMultiple",
+            private: false,
+        },
+        {
+            label: "year",
+            question: "What year will you be entering this fall?",
+            required: true,
+            type: "choice",
+            private: false,
+            options: ["Freshman", "Sophomore", "Junior", "Senior"],
+        },
+        {
+            label: "extroversion",
+            question: "Would you rather go out or stay in?",
+            required: true,
+            type: "slider",
+            private: true,
+            marks: [
+                {
+                    value: 1,
+                    label: 'Stay in',
+                },
+                {
+                    value: 5,
+                    label: 'Go out'
+                }
+            ],
+            min: 1,
+            max: 5,
+            default: 3,
+        },
+        {
+            label: "cleanliness",
+            question: "How clean do you keep your room?",
+            required: true,
+            type: "slider",
+            private: true,
+            marks: [
+                {
+                    value: 1,
+                    label: "Messy",
+                },
+                {
+                    value: 5,
+                    label: "Pristine"
+                }
+            ],
+            min: 1,
+            max: 5,
+            default: 3,
+        },
+        {
+            label: "noise",
+            question: "How quiet do you keep your room?",
+            required: true,
+            type: "slider",
+            private: true,
+            marks: [
+                {
+                    value: 1,
+                    label: "Parties",
+                },
+                {
+                    value: 5,
+                    label: "Silence"
+                }
+            ],
+            min: 1,
+            max: 5,
+            default: 3,
+        },
+        {
+            label: "sleep",
+            question: "What's your weekday sleep schedule?",
+            marks: [
+                {
+                    value: 0,
+                    label: '8pm',
+                },
+                {
+                    value: 5,
+                    label: '1am',
+                },
+                {
+                    value: 10,
+                    label: '6am',
+                },
+                {
+                    value: 15,
+                    label: '11am',
+                },
+            ],
+            min: 0,
+            max: 15,
+            required: true,
+            type: "range",
+            private: true,
+        },
+        {
+            label: "guests",
+            question: "Guests in the room?",
+            required: false,
+            type: "slider",
+            private: true,
+            marks: [
+                {
+                    value: 1.2,
+                    label: "No guests",
+                },
+                {
+                    value: 4.75,
+                    label: "Want guests"
+                }
+            ],
+            min: 1,
+            max: 5,
+            default: 3,
+        },
+        {
+            label: "dorm",
+            question: "Where are you thinking of living?",
+            required: false,
+            type: "textMultiple",
+            private: false,
+        },
+        {
+            label: "greek",
+            question: "Do you plan on joining greek life?",
+            required: false,
+            type: "slider",
+            private: true,
+            marks: [
+                {
+                    value: 1,
+                    label: "Nope",
+                },
+                {
+                    value: 5,
+                    label: "Yes"
+                }
+            ],
+            min: 1,
+            max: 5,
+            default: 3,
+        }, 
+        {
+            label: "smoke",
+            question: "Do you smoke?",
+            required: false,
+            type: "choice",
+            private: true,
+            options: ["Never", "Socially", "Yes"],
+        }, 
+        {
+            label: "drink",
+            question: "Do you drink?",
+            required: false,
+            type: "choice",
+            structure: "options",
+            private: true,
+            options: ["Never", "Socially", "Yes"]
+        },
+        {
+            label: "hometown",
+            question: "Where do you call home?",
+            required: false,
+            type: "textSingle",
+            private: false,
+        },
+        {
+            label: "instagram",
+            question: "What is your ig handle?",
+            required: false,
+            type: "textSingle",
+            private: false,
+        },
+        {
+            label: "hobbies",
+            question: "What are your hobbies?",
+            required: false,
+            type: "textMultiple",
+            private: false,
+        },
+        {
+            label: "music",
+            question: "Favorite music genres?",
+            required: false,
+            type: "textMultiple",
+            private: false,
+        },
+        {
+            label: "shows",
+            question: "Favorite TV shows?",
+            required: false,
+            type: "textMultiple",
+            private: false,
+        }
+    ]
 
+    var temp = {};
 
+    for (const q of questions) {
+        temp[q.label] = [];
+    }
+
+    let [answers, setAnswers] = useState(temp);
+
+    let [currQ, setCurrQ] = useState(0);
+
+    const nextQ = () => {
+        if (currQ === questions.length - 1) {
+
+        } else {
+            if (!questions[currQ].required || answers[questions[currQ].label].length !== 0) {
+                setCurrQ(currQ + 1);
+            }
+        }
+    }
+    
+    const skipQ = () => {
+        if (currQ === questions.length - 1) {
+
+        } else {
+            setAnswers((prevAnswers) => ({ ...prevAnswers, [questions[currQ].label]: [] }))
+            setCurrQ(currQ + 1);
+        }
+    }
+    const prevQ = () => {
+        setCurrQ(currQ - 1);
+    }
+
+    const changeAnswer = (label, newAnswer) => {
+        const answer = Array.isArray(newAnswer) ? newAnswer : [newAnswer];
+        setAnswers((prevAnswers) => ({ ...prevAnswers, [label]: answer }));
+    }
+
+    useEffect(() => {
+        console.log(answers);
+      }, [answers]);
 
     // ********************* Styling **********************
 
@@ -413,81 +660,76 @@ function CreateProfile() {
         }
     }
 
-
-
-
     return (
         <>
             <Box sx = {mainContainerStyle}>
                 <Paper sx = {createBioPanelStyle}>
                     <Stack spacing='25px'>
 
-
-                        {/* <QuestionChoice/> */}
-                        {/* <QuestionTextboxMult/> */}
-                        {/* <QuestionSlider/> */}
-                        <QuestionRange/>
-                        {/*********************Textbox Multiple*********************/}
-
-                            {/* <Box fontSize='17px' marginBottom='18px'>
-                                What is your major?
-                            </Box>
-
-                            <TextField
-                                fullWidth
-                                sx = {textBoxStyle}
-                                onChange = {(e) => {
-                                    setTextInput(e.target.value);
-                                }}
-                                onKeyDown = {(e) => {
-                                    (e.key === "Enter" || e.key === ',' 
-                                        || e.key === '.' || e.key === ';') && addTextInput();
-                                }}
-                                value = {textInput}
-                            />
-
-                            <InputList 
-                                list = {textList}
-                                setList = {setTextList}
-                            /> */}
-                            
-
-                        {/*********************Single Slider*********************/}
-
-                            {/* <Box fontSize='17px' marginBottom='18px'>
-                                What is your preferred room temperature?
-                            </Box>
-                            <Box paddingLeft='13px' paddingRight='13px'>
-                                <Slider
-                                    defaultValue={71}
-                                    // getAriaValueText={tempText}
-                                    step={1}
-                                    valueLabelDisplay='auto'
-                                    marks={tempMarks}
-                                    min={66}
-                                    max={76}
-                                />
-                            </Box> */}
-                            
-                        {/*********************Range Slider*********************/}
-                        
-                        {/* <Box fontSize='17px' marginBottom='18px'>
-                            What is your sleep schedule?
-                        </Box>
-                        
-                        <Box paddingLeft='13px' paddingRight='13px'>
-                            <Slider
-                                value={sleepHours}
-                                onChange={handleSleepChange}
-                                marks={sleepMarks}
-                                min={0}
-                                max={15}
-                                valueLabelDisplay='auto'
-                                valueLabelFormat={(value) => getSleepLabel(value)}
-                                disableSwap
-                            />
-
-                        </Box> */}
+                        {questions.map((question, index) => {
+                            if (index === currQ) {
+                                // console.log(question.private)
+                                switch (question.type) {
+                                    case 'choice':
+                                        return (
+                                            <QuestionChoice
+                                                label = {question.label}
+                                                question = {question.question}
+                                                options = {question.options}
+                                                isPrivate = {question.private}
+                                                changeAnswer = {changeAnswer}
+                                            />
+                                        );
+                                    case 'textMultiple':
+                                        return (
+                                            <QuestionTextbox
+                                                label = {question.label}
+                                                multiple = {true}
+                                                question = {question.question}
+                                                isPrivate = {question.private}
+                                                changeAnswer = {changeAnswer}
+                                            />
+                                        );
+                                    case 'textSingle':
+                                        return (
+                                            <QuestionTextbox
+                                                label = {question.label}
+                                                multiple = {false}
+                                                question = {question.question}
+                                                isPrivate = {question.private}
+                                                changeAnswer = {changeAnswer}
+                                            />
+                                        )
+                                    case 'slider':
+                                        return(
+                                            <QuestionSlider
+                                                label = {question.label}
+                                                question = {question.question}
+                                                marks = {question.marks}
+                                                min = {question.min}
+                                                max = {question.max}
+                                                isPrivate = {question.private}
+                                                changeAnswer = {changeAnswer}
+                                            />
+                                        );
+                                    case 'range':
+                                        return(
+                                            <QuestionRange
+                                                label = {question.label}
+                                                question = {question.question}
+                                                marks = {question.marks}
+                                                min = {question.min}
+                                                max = {question.max}
+                                                isPrivate = {question.private}
+                                                changeAnswer = {changeAnswer}
+                                            />
+                                        );
+                                    default:
+                                        return null;
+                                }
+                            }
+                            return null;
+                        })} 
 
                         <Grid
                             container
@@ -495,14 +737,17 @@ function CreateProfile() {
                             columns={30}
                         >
                             <Grid item xs={8}>
-                                <Button 
-                                    variant='contained'
-                                    sx={buttonStyle}
-                                    fullWidth
-                                    disableRipple
-                                >
-                                    Previous
-                                </Button>
+                                {currQ !== 0 ? 
+                                    (<Button 
+                                        variant='contained'
+                                        sx={buttonStyle}
+                                        fullWidth
+                                        disableRipple
+                                        onClick = {prevQ}
+                                    >
+                                        Previous
+                                    </Button>) : ""
+                                }
                             </Grid>
                             
                             <Grid item xs={14}> 
@@ -512,14 +757,18 @@ function CreateProfile() {
                                     columns={14}
                                 >
                                     <Grid item xs={6}>
-                                        <Button
-                                            variant = 'contained'
-                                            sx = {buttonStyle}
-                                            fullWidth
-                                            disableRipple
-                                        >
-                                            Skip
-                                        </Button>
+                                        {!questions[currQ].required ? 
+                                            (<Button
+                                                variant = 'contained'
+                                                sx = {buttonStyle}
+                                                fullWidth
+                                                disableRipple
+                                                onClick = {skipQ}
+                                            >
+                                                Skip
+                                            </Button>) : ""
+                                        }
+                                        
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Button
@@ -527,6 +776,7 @@ function CreateProfile() {
                                             sx = {buttonStyle}
                                             fullWidth
                                             disableRipple
+                                            onClick = {nextQ}
                                         >
                                             Next
                                         </Button>

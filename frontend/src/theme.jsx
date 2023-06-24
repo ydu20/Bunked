@@ -34,7 +34,10 @@ const theme = createTheme({
                     ' &.Mui-active': {
                         boxShadow:'none',
                     },
-                  }
+                },
+                mark: {
+                    display: 'none',
+                  },
             }
             
         },
