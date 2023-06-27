@@ -57,7 +57,7 @@ function MatchingDetail() {
         .then(res => {
             alert("User Accepted");
             handleMatch(); // Check and handle match
-            navigate('/home')
+            navigate('/home');
         }).catch(err => 
             alert('ERROR: ' + err) 
         )
@@ -68,6 +68,7 @@ function MatchingDetail() {
         axios.post('/actions/rejectUser', {baseEmail: baseEmail, targetEmail: targetUser.email})
         .then(res => {
             alert("User Rejected");
+            navigate('/home');
         }).catch(err => 
             alert('ERROR: ' + err) 
         )
