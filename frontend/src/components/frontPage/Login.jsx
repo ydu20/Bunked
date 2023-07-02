@@ -144,6 +144,10 @@
 import {useRef, useEffect, useState } from 'react';
 import {Box, Grid, Paper, Stack, TextField} from '@mui/material';
 import Button from '@mui/material/Button';
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+
 
 
 function Login() {
@@ -160,6 +164,10 @@ function Login() {
 
     let [submitError, setSubmitError] = useState(false);
     let [submitErrorText, setSubmitErrorText] = useState("");
+
+    let [serverError, setServerError] = useState('');
+
+    const navigate = useNavigate();
 
     const validEmailRegex = RegExp(
         /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/
@@ -228,7 +236,17 @@ function Login() {
 
     const handleLogin = async () => {
         if (loginData.email.trim() !== '' && loginData.password.trim() !== '') {
-
+            const params = {
+                email: loginData.email,
+                password: loginData.password,
+            };
+            axios.post('/login', params).then((res) => {
+                console.log(res.data);
+                Cookies.set('email', res.data.email, {expires: 3});
+                navigate('/home');
+            }).catch((error) => {
+                setServerError(error.response.data);
+            });
         }
     }
 
