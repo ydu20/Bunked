@@ -261,7 +261,7 @@
 //             }
 //         });
 
-        
+
 //         bioInfo["email"] = Cookies.get('email');
 //         axios.post('/create-bio', bioInfo).then((res) => {
 //             console.log(res.data)
@@ -363,6 +363,9 @@
 
 import {useRef, useEffect, useState } from 'react';
 import {Box, Button, Grid, Paper, Stack} from '@mui/material';
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
+import {Navigate, useNavigate, useLocation} from 'react-router-dom';
 
 import QuestionChoice from './QuestionChoice'
 import QuestionTextbox from './QuestionTextbox'
@@ -370,9 +373,13 @@ import QuestionSlider from './QuestionSlider'
 import QuestionRange from './QuestionRange'
 import QuestionPicture from './QuestionPicture'
 
-function CreateProfile() {
+
+function CreateBio() {
 
     // ********************* Variables & Functions **********************
+
+    const {state} = useLocation();
+    const navigate = useNavigate();
 
     var questions = [
         {
@@ -594,7 +601,6 @@ function CreateProfile() {
     ]
 
     var temp = {};
-
     for (const q of questions) {
         temp[q.label] = [];
     }
@@ -603,8 +609,56 @@ function CreateProfile() {
 
     let [currQ, setCurrQ] = useState(0);
 
+    let [errorMsg, setErrorMsg] = useState("");
+
     const nextQ = () => {
-        if (currQ === questions.length - 1) {
+        if (currQ === questions.length - 2) {
+            var params = {}
+            questions.map((q) => {
+                if (answers[q.label].length > 0) {
+                    if (q.type === 'textMultiple') {
+                        params[q.label] = answers[q.label];
+                    } else if (q.type === 'range') {
+                        var temp = {
+                            start: answers[q.label][0],
+                            end: answers[q.label][1],
+                        }
+                        params[q.label] = temp;
+                    } else {
+                        params[q.label] = answers[q.label][0];
+                    }
+                }
+            })
+            
+            params['email'] = Cookies.get('email');
+            console.log(params)
+            axios.post('/create-bio', params).then((res) => {
+                console.log(res.data);
+                setCurrQ(currQ + 1);
+            }).catch((error) => {
+                setErrorMsg(error.response.data);
+            });
+
+            setCurrQ(currQ + 1);
+
+        } else if (currQ === questions.length - 1) {
+            // Upload picture
+            const formData = new FormData();
+            formData.append('email', Cookies.get('email'));
+            answers['pictures'].map((pic) => {
+                formData.append('pictures', pic);
+            })            
+            console.log(formData);
+
+            axios.post('/profile-pic', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+            }).then(() => {
+                navigate('/home');
+            }).catch((error) => {
+                setErrorMsg(error.response.data);
+            });
 
         } else {
             if (!questions[currQ].required || answers[questions[currQ].label].length !== 0) {
@@ -614,8 +668,8 @@ function CreateProfile() {
     }
     
     const skipQ = () => {
-        if (currQ === questions.length - 1) {
-
+        if (currQ >= questions.length - 2) {
+            nextQ();
         } else {
             setAnswers((prevAnswers) => ({ ...prevAnswers, [questions[currQ].label]: [] }))
             setCurrQ(currQ + 1);
@@ -623,6 +677,7 @@ function CreateProfile() {
     }
     const prevQ = () => {
         setCurrQ(currQ - 1);
+        setErrorMsg("");
     }
 
     const changeAnswer = (label, newAnswer) => {
@@ -630,9 +685,12 @@ function CreateProfile() {
         setAnswers((prevAnswers) => ({ ...prevAnswers, [label]: answer }));
     }
 
-    useEffect(() => {
-        console.log(answers);
-      }, [answers]);
+    // useEffect(() => {
+    //     console.log(answers);
+    // }, [answers]);
+
+
+
 
     // ********************* Styling **********************
 
@@ -667,7 +725,18 @@ function CreateProfile() {
         }
     }
 
-    return (
+    const errorMsgStyle = {
+        display: (errorMsg.length === 0) ? 'none' : 'block',
+        paddingTop: '10px',
+        paddingBottom: '7px',
+        height: '10px',
+        fontSize: '13px',
+        color: 'rgb(211, 47, 47)',
+    }
+
+    if (!state || !state.internal) {
+        return <Navigate to = '/'/>;
+    } return (
         <>
             <Box sx = {mainContainerStyle}>
                 <Paper sx = {createBioPanelStyle}>
@@ -753,7 +822,11 @@ function CreateProfile() {
                                     return null;
                             }
                             })} 
+                            <Box sx = {errorMsgStyle}>
+                                {errorMsg}
+                            </Box>
                         </Stack>
+
                         <Grid
                             container
                             justifyContent="space-between"
@@ -816,5 +889,4 @@ function CreateProfile() {
 }
 
 
-
-export default CreateProfile;
+export default CreateBio;

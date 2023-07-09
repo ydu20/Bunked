@@ -28,7 +28,7 @@ const userBioSchema = new Schema ({
         trim: true,
     }, 
     year: {
-        type: Number,
+        type: String,
         required: true,
     },
     extroversion: {
@@ -54,8 +54,8 @@ const userBioSchema = new Schema ({
     guests: Number,
     dorm: [String],
     greek: Number,
-    smoke: Number,
-    drink: Number,
+    smoke: String,
+    drink: String,
     hobbies: [String],
     hometown: String,
     music: [String],

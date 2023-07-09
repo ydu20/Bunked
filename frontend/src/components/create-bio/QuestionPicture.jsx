@@ -1,7 +1,7 @@
 import {useState, useRef} from 'react';
 import {Box, Grid, Paper} from '@mui/material';
 import Button from '@mui/material/Button';
-
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 function QuestionPicture({label, question, changeAnswer, visible}) {
     // ********************* Variables & Functions **********************
@@ -12,7 +12,16 @@ function QuestionPicture({label, question, changeAnswer, visible}) {
 
     const addPic = (e) => {
         console.log(e.target.files);
-        setPics([...pics, URL.createObjectURL(e.target.files[0])]);
+        let tmp = [...pics, e.target.files[0]]
+        setPics(tmp);
+        changeAnswer(label, tmp)
+    }
+
+    const deletePic = (i) => {
+        let tmp = [...pics];
+        tmp.splice(i, 1);
+        setPics(tmp);
+        changeAnswer(label, tmp)
     }
 
     // ********************* Styling **********************
@@ -46,7 +55,7 @@ function QuestionPicture({label, question, changeAnswer, visible}) {
         padding: '1px',
         height: '187px',
         border: 'solid 1px transparent',
-        overflow: 'hidden',
+        position: 'relative',
     }
 
     const pictureStyle = {
@@ -54,6 +63,26 @@ function QuestionPicture({label, question, changeAnswer, visible}) {
         borderRadius: '10px',
         objectFit: 'cover',
         overflow: 'hidden',
+    }
+
+    const deleteButtonStyle = {
+        position: 'absolute',
+        top: '-7px',
+        right: '-8px',
+        height: '20px',
+        width: '20px',
+        color: 'red',
+        cursor: 'pointer',
+    }
+
+    const deleteButtonOverlayStyle = {
+        position: 'absolute',
+        top: '-7px',
+        right: '-8px',
+        height: '18px',
+        width: '18px',
+        borderRadius: '50%',
+        backgroundColor: 'white',
     }
 
     return (
@@ -83,7 +112,11 @@ function QuestionPicture({label, question, changeAnswer, visible}) {
                                 </>
                             ) : i < pics.length ? (
                                 <Box style = {pictureWrapperStyle}>
-                                    <img src={pics[i]} style = {pictureStyle}/>
+                                    <Box height = {'100%'} overflow = {'hidden'}>
+                                        <img src={URL.createObjectURL(pics[i])} style = {pictureStyle}/>
+                                    </Box>
+                                    <Box style = {deleteButtonOverlayStyle}></Box>
+                                    <HighlightOffIcon style = {deleteButtonStyle} onClick = {() => {deletePic(i)}}/>
                                 </Box>
                             ) : (
                                 <Box sx = {emptyPicStyle}/>                                    

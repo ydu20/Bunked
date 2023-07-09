@@ -27,8 +27,7 @@ function QuestionRange({label, question, marks, min, max, isPrivate, changeAnswe
     };
     
     useEffect(() => {
-        var r = [range]
-        changeAnswer(label, r);
+        changeAnswer(label, range);
     }, [range]);
 
     const setLabel = (value) => {

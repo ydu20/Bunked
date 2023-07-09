@@ -11,8 +11,9 @@ const encoder = require('@tensorflow-models/universal-sentence-encoder') // to l
 
 // app
 const app = express();
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 
 
 // db

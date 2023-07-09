@@ -9,6 +9,7 @@ import Waitroom from '../waitroom/Waitroom';
 import Matches from "../matches/Matches";
 import MatchingCard from '../matchingCard/MatchingCard';
 import Sidebar from '../Sidebar/Sidebar';
+import Chat from '../chat/Chat';
 
 
 function Home() {
@@ -67,10 +68,9 @@ function Home() {
         if (bio.err) {
             return <Navigate to = "/"/>;
         }
-        // Disabled for development:
-        // else if (bio.notCreated) {
-        //     return <Navigate to = '/create-bio' state = {{internal: true}}/>;
-        // } 
+        else if (bio.notCreated) {
+            return <Navigate to = '/create-bio' state = {{internal: true}}/>;
+        } 
         else {
             return (
                 <div className = "homepage-container">
@@ -93,7 +93,7 @@ function Home() {
                                 <Route path="/temp" element={<MatchingDetail baseEmail={Cookies.get('email')} userArr={recommendedUsers} lastIndex = {lastIndex} setLastIndex = {setLastIndex} resetRecommend={resetRecommend}/>} />
 
                                 <Route path="/matchingDetail" element={<MatchingDetail />}/>
-                                {/* <Route path="/chat" Chat component here />  */}
+                                <Route path="/chat" element = {<Chat/>}/> 
                             </Routes>
                         </div>
                     </div>

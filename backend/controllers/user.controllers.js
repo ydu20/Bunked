@@ -132,18 +132,9 @@ exports.getUserBio = async (req, res) => {
 exports.createUserBio = async (req, res) => {
   // Check if params meet validation requirements
   const validationErrors = validate.validationResult(req);
-  const errors = [];
 
-  if (!validationErrors.errors.isEmpty) {
-      validationErrors.errors.forEach((error) => {
-        errors.push({param: error.param, msg: error.msg});
-      });
-  }
-
-  if (errors.length) {
-      return res.status(400).json({
-        error: errors,
-      });
+  if (validationErrors.errors.length !== 0) {
+    return res.status(400).json('Error: ' + validationErrors.errors[0].msg);
   }
 
   // Check if email is a registered user and also get user's name
@@ -159,16 +150,26 @@ exports.createUserBio = async (req, res) => {
     return res.status(400).json('Error: Bio already exists');
   }
 
-  // create Bio    
+  // Create Bio    
   const name = user.name;
   const gender = req.body.gender;
-
 
   const majors = req.body.majors;
   const year = req.body.year;
   const extroversion = req.body.extroversion;
   const cleanliness = req.body.cleanliness;
   const noise = req.body.noise;
+  const sleep = req.body.sleep;
+  const guests = req.body.guests;
+  const dorm = req.body.dorm;
+  const greek = req.body.greek;
+  const smoke = req.body.smoke;
+  const drink = req.body.drink;
+  const hobbies = req.body.hobbies;
+  const hometown = req.body.hometown;
+  const music = req.body.music;
+  const shows = req.body.shows;
+  const instagram = req.body.instagram;
   
   const newBio = new UserBio ({
     email,
@@ -179,8 +180,18 @@ exports.createUserBio = async (req, res) => {
     extroversion,
     cleanliness,
     noise,
+    sleep,
+    guests,
+    dorm,
+    greek,
+    smoke,
+    drink,
+    hobbies,
+    hometown,
+    music,
+    shows,
+    instagram,
   });
-  
 
   newBio.save().then(() => res.json('Bio Created!'))
       .catch(err => res.status(400).json('Error: ' + err));

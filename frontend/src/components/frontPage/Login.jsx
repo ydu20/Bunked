@@ -144,6 +144,9 @@
 import {useRef, useEffect, useState } from 'react';
 import {Box, Grid, Paper, Stack, TextField} from '@mui/material';
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
 
 
 function Login() {
@@ -160,6 +163,8 @@ function Login() {
 
     let [submitError, setSubmitError] = useState(false);
     let [submitErrorText, setSubmitErrorText] = useState("");
+
+    const navigate = useNavigate();
 
     const validEmailRegex = RegExp(
         /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/
@@ -206,29 +211,23 @@ function Login() {
         }
     }
 
-//     var handleLogin = async (event) => {
-//         event.preventDefault();
-//         if (emailError.length === 0 && passwordError.length === 0
-//             && loginEmail.length !== 0 && loginPassword.length !== 0) {
-//             var params = {
-//                 email: loginEmail,
-//                 password: loginPassword,
-//             };
-//             axios.post('/login', params).then((res) => {
-//                 console.log(res.data);
-//                 Cookies.set('email', res.data.email, {expires: 3});
-//                 navigate('/home');
-//             }).catch((error) => {
-//                 setServerError(error.response.data);
-//             });
-//         }
-//     }
-
-
-
     const handleLogin = async () => {
         if (loginData.email.trim() !== '' && loginData.password.trim() !== '') {
-
+            var params = {
+                email: loginData.email,
+                password: loginData.password,
+            }
+            axios.post('/login', params).then((res) => {
+                console.log(res.data);
+                Cookies.set('email', res.data.email, {expires: 3});
+                navigate('/home');
+            }).catch((error) => {
+                setSubmitError(true);
+                setSubmitErrorText(error.response.data);
+            })
+        } else {
+            setSubmitError(true);
+            setSubmitErrorText('Please enter a valid email and password')
         }
     }
 
@@ -237,11 +236,26 @@ function Login() {
                 && signupData.lastname.trim() !== '' && signupData.password.trim() !== ''
                 && signupData.password2.trim() !== '' && !signEmErr && !signFirstErr
                 && !signLastErr && !signPwErr && !signPw2Err) {
-            if (!loginData.email.toLowerCase().endsWith('upenn.edu')) {
+            if (!signupData.email.toLowerCase().endsWith('upenn.edu')) {
+                console.log(signupData.email.toLowerCase());
                 setSubmitError(true);
                 setSubmitErrorText('We only support UPenn students at this moment')
             } else {
                 // axios....
+                var params = {
+                    email: signupData.email,
+                    password: signupData.password,
+                    name: signupData.firstname,
+                }
+                axios.post('/register', params).then((res) => {
+                    Cookies.set('email', res.data.email, {expires: 3});
+                    navigate('/create-bio');
+                    setSubmitError(true);
+                    setSubmitErrorText('Yeah!!!');                    
+                }).catch((error) => {
+                    setSubmitError(true);
+                    setSubmitErrorText(error.response.data);
+                })
             }
         }
     }
@@ -349,6 +363,9 @@ function Login() {
                             name = "password"
                             value={loginData.password}
                             onChange={handleLoginChange}
+                            onKeyDown = {(e) => {
+                                (e.key === 'Enter' && handleLogin());
+                            }}
                         />
                         <Stack>
                             <Button
@@ -362,7 +379,7 @@ function Login() {
                             {submitError ? (
                                 <Box sx = {submitErrorStyle}>
                                     {submitErrorText}
-                                </Box>                    
+                                </Box>
                             ) : ""}
                         </Stack>
                         
