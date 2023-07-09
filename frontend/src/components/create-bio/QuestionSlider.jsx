@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 import {Box} from '@mui/material';
 import Slider from '@mui/material/Slider';
 
-function QuestionSlider({label, question, marks, min, max, isPrivate, changeAnswer}) {
+function QuestionSlider({label, question, marks, min, max, isPrivate, changeAnswer, visible}) {
 
     // const tempMarks = [
     //     {
@@ -31,7 +31,7 @@ function QuestionSlider({label, question, marks, min, max, isPrivate, changeAnsw
     }, [value])
 
     return(
-        <Box fullWidth>
+        <Box display = {visible ? 'block' : 'none'}>
             <Box fontSize = '17px' marginBottom={isPrivate ? '10px' : '18px'}>
                 <Box>
                     {question}

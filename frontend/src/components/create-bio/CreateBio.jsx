@@ -368,6 +368,7 @@ import QuestionChoice from './QuestionChoice'
 import QuestionTextbox from './QuestionTextbox'
 import QuestionSlider from './QuestionSlider'
 import QuestionRange from './QuestionRange'
+import QuestionPicture from './QuestionPicture'
 
 function CreateProfile() {
 
@@ -582,6 +583,13 @@ function CreateProfile() {
             required: false,
             type: "textMultiple",
             private: false,
+        },
+        {
+            label: "pictures",
+            question: "Upload some pictures",
+            required: true,
+            type: "uploadPics",
+            private: false,
         }
     ]
 
@@ -637,11 +645,10 @@ function CreateProfile() {
     }
 
     const createBioPanelStyle = {
-        width: '380px',
+        width: currQ === questions.length - 1 ? '512px': '380px',
         padding: '30px 30px 25px 30px',
         backgroundColor: 'white',
     }
-
 
     const buttonStyle = {
         color: 'white',
@@ -665,78 +672,94 @@ function CreateProfile() {
             <Box sx = {mainContainerStyle}>
                 <Paper sx = {createBioPanelStyle}>
                     <Stack spacing='25px'>
-
+                        <Stack spacing = '0px'>
                         {questions.map((question, index) => {
-                            if (index === currQ) {
-                                // console.log(question.private)
-                                switch (question.type) {
-                                    case 'choice':
-                                        return (
-                                            <QuestionChoice
-                                                label = {question.label}
-                                                question = {question.question}
-                                                options = {question.options}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'textMultiple':
-                                        return (
-                                            <QuestionTextbox
-                                                label = {question.label}
-                                                multiple = {true}
-                                                question = {question.question}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'textSingle':
-                                        return (
-                                            <QuestionTextbox
-                                                label = {question.label}
-                                                multiple = {false}
-                                                question = {question.question}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        )
-                                    case 'slider':
-                                        return(
-                                            <QuestionSlider
-                                                label = {question.label}
-                                                question = {question.question}
-                                                marks = {question.marks}
-                                                min = {question.min}
-                                                max = {question.max}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'range':
-                                        return(
-                                            <QuestionRange
-                                                label = {question.label}
-                                                question = {question.question}
-                                                marks = {question.marks}
-                                                min = {question.min}
-                                                max = {question.max}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    default:
-                                        return null;
-                                }
+                            switch (question.type) {
+                                case 'choice':
+                                    return (
+                                        <QuestionChoice
+                                            label = {question.label}
+                                            question = {question.question}
+                                            options = {question.options}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'textMultiple':
+                                    return (
+                                        <QuestionTextbox
+                                            label = {question.label}
+                                            multiple = {true}
+                                            question = {question.question}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'textSingle':
+                                    return (
+                                        <QuestionTextbox
+                                            label = {question.label}
+                                            multiple = {false}
+                                            question = {question.question}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    )
+                                case 'slider':
+                                    return(
+                                        <QuestionSlider
+                                            label = {question.label}
+                                            question = {question.question}
+                                            marks = {question.marks}
+                                            min = {question.min}
+                                            max = {question.max}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'range':
+                                    return(
+                                        <QuestionRange
+                                            label = {question.label}
+                                            question = {question.question}
+                                            marks = {question.marks}
+                                            min = {question.min}
+                                            max = {question.max}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'uploadPics':
+                                    return(
+                                        <QuestionPicture
+                                            label = {question.label}
+                                            question = {question.question}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                default:
+                                    return null;
                             }
-                            return null;
-                        })} 
-
+                            })} 
+                        </Stack>
                         <Grid
                             container
                             justifyContent="space-between"
                             columns={30}
                         >
-                            <Grid item xs={8}>
+                            <Grid item xs={currQ === questions.length - 1 ? 6 : 8}>
                                 {currQ !== 0 ? 
                                     (<Button 
                                         variant='contained'
@@ -770,7 +793,7 @@ function CreateProfile() {
                                         }
                                         
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={currQ === questions.length - 1 ? 5.5 : 6}>
                                         <Button
                                             variant = 'contained'
                                             sx = {buttonStyle}
@@ -778,7 +801,7 @@ function CreateProfile() {
                                             disableRipple
                                             onClick = {nextQ}
                                         >
-                                            Next
+                                            {currQ === questions.length - 1 ? 'Submit' : 'Next'}
                                         </Button>
                                     </Grid>
                                 </Grid>

@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
 
-function QuestionChoice({label, question, isPrivate, options, changeAnswer}) {
+function QuestionChoice({label, question, isPrivate, options, changeAnswer, visible}) {
 
     // ********************* Variables & Functions **********************
 
@@ -55,7 +55,7 @@ function QuestionChoice({label, question, isPrivate, options, changeAnswer}) {
     }
 
     return (
-        <Box fullWidth>
+        <Box display = {visible ? 'block' : 'none'}>
             <Box fontSize = '17px' marginBottom={isPrivate ? '12px' : '18px'}>
                 <Box>
                     {question}
