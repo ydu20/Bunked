@@ -62,16 +62,16 @@ function Home() {
     }, []);
 
 
-    if (!Cookies.get('email')) {
-        return <Navigate to = "/"/>;
-    } else if (!loading) {
-        if (bio.err) {
-            return <Navigate to = "/"/>;
-        }
-        else if (bio.notCreated) {
-            return <Navigate to = '/create-bio' state = {{internal: true}}/>;
-        } 
-        else {
+    // if (!Cookies.get('email')) {
+    //     return <Navigate to = "/"/>;
+    // } else if (!loading) {
+    //     if (bio.err) {
+    //         return <Navigate to = "/"/>;
+    //     }
+    //     else if (bio.notCreated) {
+    //         return <Navigate to = '/create-bio' state = {{internal: true}}/>;
+    //     } 
+    //     else {
             return (
                 <div className = "homepage-container">
 
@@ -99,10 +99,10 @@ function Home() {
                     </div>
                 </div>
             )
-        }
-    } else {
-        return <>Loading...</>;
-    }
+    //     }
+    // } else {
+    //     return <>Loading...</>;
+    // }
     
 }
 

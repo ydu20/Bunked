@@ -12,6 +12,11 @@ const theme = createTheme({
             light: '#F2F9FA',
             main: '#00B2B7',
         },
+        secondary: {
+            main: '#42a5f5',
+            dark: '#1565c0',
+            light: '#42a5f5',
+        }
     },
     components: {
         MuiPaper: {

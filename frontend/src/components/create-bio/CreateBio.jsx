@@ -647,7 +647,7 @@ function CreateBio() {
             formData.append('email', Cookies.get('email'));
             answers['pictures'].map((pic) => {
                 formData.append('pictures', pic);
-            })            
+            })
             console.log(formData);
 
             axios.post('/profile-pic', formData, {
