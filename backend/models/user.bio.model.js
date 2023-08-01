@@ -51,6 +51,7 @@ const userBioSchema = new Schema ({
             type: Number,
         }
     },
+    aboutBio: String,
     guests: Number,
     dorm: [String],
     greek: Number,

@@ -9,6 +9,7 @@ import Waitroom from '../waitroom/Waitroom';
 import Matches from "../matches/Matches";
 import MatchingCard from '../matchingCard/MatchingCard';
 import Sidebar from '../Sidebar/Sidebar';
+import Profile from '../profile/Profile';
 
 
 function Home() {
@@ -93,7 +94,9 @@ function Home() {
                                 <Route path="/temp" element={<MatchingDetail baseEmail={Cookies.get('email')} userArr={recommendedUsers} lastIndex = {lastIndex} setLastIndex = {setLastIndex} resetRecommend={resetRecommend}/>} />
 
                                 <Route path="/matchingDetail" element={<MatchingDetail />}/>
+
                                 {/* <Route path="/chat" Chat component here />  */}
+                                <Route path="/profile" element={<Profile />}/>
                             </Routes>
                         </div>
                     </div>
