@@ -261,7 +261,7 @@
 //             }
 //         });
 
-        
+
 //         bioInfo["email"] = Cookies.get('email');
 //         axios.post('/create-bio', bioInfo).then((res) => {
 //             console.log(res.data)
@@ -363,15 +363,23 @@
 
 import {useRef, useEffect, useState } from 'react';
 import {Box, Button, Grid, Paper, Stack} from '@mui/material';
+import axios from '../AxiosInstance';
+import Cookies from 'js-cookie';
+import {Navigate, useNavigate, useLocation} from 'react-router-dom';
 
 import QuestionChoice from './QuestionChoice'
 import QuestionTextbox from './QuestionTextbox'
 import QuestionSlider from './QuestionSlider'
 import QuestionRange from './QuestionRange'
+import QuestionPicture from './QuestionPicture'
 
-function CreateProfile() {
+
+function CreateBio() {
 
     // ********************* Variables & Functions **********************
+
+    const {state} = useLocation();
+    const navigate = useNavigate();
 
     var questions = [
         {
@@ -582,11 +590,17 @@ function CreateProfile() {
             required: false,
             type: "textMultiple",
             private: false,
+        },
+        {
+            label: "pictures",
+            question: "Upload some pictures",
+            required: true,
+            type: "uploadPics",
+            private: false,
         }
     ]
 
     var temp = {};
-
     for (const q of questions) {
         temp[q.label] = [];
     }
@@ -595,8 +609,56 @@ function CreateProfile() {
 
     let [currQ, setCurrQ] = useState(0);
 
+    let [errorMsg, setErrorMsg] = useState("");
+
     const nextQ = () => {
-        if (currQ === questions.length - 1) {
+        if (currQ === questions.length - 2) {
+            var params = {}
+            questions.map((q) => {
+                if (answers[q.label].length > 0) {
+                    if (q.type === 'textMultiple') {
+                        params[q.label] = answers[q.label];
+                    } else if (q.type === 'range') {
+                        var temp = {
+                            start: answers[q.label][0],
+                            end: answers[q.label][1],
+                        }
+                        params[q.label] = temp;
+                    } else {
+                        params[q.label] = answers[q.label][0];
+                    }
+                }
+            })
+            
+            params['email'] = Cookies.get('email');
+            console.log(params)
+            axios.post('/create-bio', params).then((res) => {
+                console.log(res.data);
+                setCurrQ(currQ + 1);
+            }).catch((error) => {
+                setErrorMsg(error.response.data);
+            });
+
+            setCurrQ(currQ + 1);
+
+        } else if (currQ === questions.length - 1) {
+            // Upload picture
+            const formData = new FormData();
+            formData.append('email', Cookies.get('email'));
+            answers['pictures'].map((pic) => {
+                formData.append('pictures', pic);
+            })
+            console.log(formData);
+
+            axios.post('/profile-pic', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+            }).then(() => {
+                navigate('/home');
+            }).catch((error) => {
+                setErrorMsg(error.response.data);
+            });
 
         } else {
             if (!questions[currQ].required || answers[questions[currQ].label].length !== 0) {
@@ -606,8 +668,8 @@ function CreateProfile() {
     }
     
     const skipQ = () => {
-        if (currQ === questions.length - 1) {
-
+        if (currQ >= questions.length - 2) {
+            nextQ();
         } else {
             setAnswers((prevAnswers) => ({ ...prevAnswers, [questions[currQ].label]: [] }))
             setCurrQ(currQ + 1);
@@ -615,6 +677,7 @@ function CreateProfile() {
     }
     const prevQ = () => {
         setCurrQ(currQ - 1);
+        setErrorMsg("");
     }
 
     const changeAnswer = (label, newAnswer) => {
@@ -622,9 +685,12 @@ function CreateProfile() {
         setAnswers((prevAnswers) => ({ ...prevAnswers, [label]: answer }));
     }
 
-    useEffect(() => {
-        console.log(answers);
-      }, [answers]);
+    // useEffect(() => {
+    //     console.log(answers);
+    // }, [answers]);
+
+
+
 
     // ********************* Styling **********************
 
@@ -637,11 +703,10 @@ function CreateProfile() {
     }
 
     const createBioPanelStyle = {
-        width: '380px',
+        width: currQ === questions.length - 1 ? '512px': '380px',
         padding: '30px 30px 25px 30px',
         backgroundColor: 'white',
     }
-
 
     const buttonStyle = {
         color: 'white',
@@ -660,83 +725,114 @@ function CreateProfile() {
         }
     }
 
-    return (
+    const errorMsgStyle = {
+        display: (errorMsg.length === 0) ? 'none' : 'block',
+        paddingTop: '10px',
+        paddingBottom: '7px',
+        height: '10px',
+        fontSize: '13px',
+        color: 'rgb(211, 47, 47)',
+    }
+
+    if (!state || !state.internal) {
+        return <Navigate to = '/'/>;
+    } return (
         <>
             <Box sx = {mainContainerStyle}>
                 <Paper sx = {createBioPanelStyle}>
                     <Stack spacing='25px'>
-
+                        <Stack spacing = '0px'>
                         {questions.map((question, index) => {
-                            if (index === currQ) {
-                                // console.log(question.private)
-                                switch (question.type) {
-                                    case 'choice':
-                                        return (
-                                            <QuestionChoice
-                                                label = {question.label}
-                                                question = {question.question}
-                                                options = {question.options}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'textMultiple':
-                                        return (
-                                            <QuestionTextbox
-                                                label = {question.label}
-                                                multiple = {true}
-                                                question = {question.question}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'textSingle':
-                                        return (
-                                            <QuestionTextbox
-                                                label = {question.label}
-                                                multiple = {false}
-                                                question = {question.question}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        )
-                                    case 'slider':
-                                        return(
-                                            <QuestionSlider
-                                                label = {question.label}
-                                                question = {question.question}
-                                                marks = {question.marks}
-                                                min = {question.min}
-                                                max = {question.max}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    case 'range':
-                                        return(
-                                            <QuestionRange
-                                                label = {question.label}
-                                                question = {question.question}
-                                                marks = {question.marks}
-                                                min = {question.min}
-                                                max = {question.max}
-                                                isPrivate = {question.private}
-                                                changeAnswer = {changeAnswer}
-                                            />
-                                        );
-                                    default:
-                                        return null;
-                                }
+                            switch (question.type) {
+                                case 'choice':
+                                    return (
+                                        <QuestionChoice
+                                            label = {question.label}
+                                            question = {question.question}
+                                            options = {question.options}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'textMultiple':
+                                    return (
+                                        <QuestionTextbox
+                                            label = {question.label}
+                                            multiple = {true}
+                                            question = {question.question}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'textSingle':
+                                    return (
+                                        <QuestionTextbox
+                                            label = {question.label}
+                                            multiple = {false}
+                                            question = {question.question}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    )
+                                case 'slider':
+                                    return(
+                                        <QuestionSlider
+                                            label = {question.label}
+                                            question = {question.question}
+                                            marks = {question.marks}
+                                            min = {question.min}
+                                            max = {question.max}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'range':
+                                    return(
+                                        <QuestionRange
+                                            label = {question.label}
+                                            question = {question.question}
+                                            marks = {question.marks}
+                                            min = {question.min}
+                                            max = {question.max}
+                                            isPrivate = {question.private}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                case 'uploadPics':
+                                    return(
+                                        <QuestionPicture
+                                            label = {question.label}
+                                            question = {question.question}
+                                            changeAnswer = {changeAnswer}
+                                            visible = {index === currQ}
+                                            key = {index}
+                                        />
+                                    );
+                                default:
+                                    return null;
                             }
-                            return null;
-                        })} 
+                            })} 
+                            <Box sx = {errorMsgStyle}>
+                                {errorMsg}
+                            </Box>
+                        </Stack>
 
                         <Grid
                             container
                             justifyContent="space-between"
                             columns={30}
                         >
-                            <Grid item xs={8}>
+                            <Grid item xs={currQ === questions.length - 1 ? 6 : 8}>
                                 {currQ !== 0 ? 
                                     (<Button 
                                         variant='contained'
@@ -770,7 +866,7 @@ function CreateProfile() {
                                         }
                                         
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={currQ === questions.length - 1 ? 5.5 : 6}>
                                         <Button
                                             variant = 'contained'
                                             sx = {buttonStyle}
@@ -778,7 +874,7 @@ function CreateProfile() {
                                             disableRipple
                                             onClick = {nextQ}
                                         >
-                                            Next
+                                            {currQ === questions.length - 1 ? 'Submit' : 'Next'}
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -793,5 +889,4 @@ function CreateProfile() {
 }
 
 
-
-export default CreateProfile;
+export default CreateBio;

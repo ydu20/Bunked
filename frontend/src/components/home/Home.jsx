@@ -10,7 +10,7 @@ import Matches from "../matches/Matches";
 import MatchingCard from '../matchingCard/MatchingCard';
 import Sidebar from '../Sidebar/Sidebar';
 import Profile from '../profile/Profile';
-
+import Chat from '../chat/Chat';
 
 function Home() {
 
@@ -62,17 +62,16 @@ function Home() {
     }, []);
 
 
-    if (!Cookies.get('email')) {
-        return <Navigate to = "/"/>;
-    } else if (!loading) {
-        if (bio.err) {
-            return <Navigate to = "/"/>;
-        }
-        // Disabled for development:
-        // else if (bio.notCreated) {
-        //     return <Navigate to = '/create-bio' state = {{internal: true}}/>;
-        // } 
-        else {
+    // if (!Cookies.get('email')) {
+    //     return <Navigate to = "/"/>;
+    // } else if (!loading) {
+    //     if (bio.err) {
+    //         return <Navigate to = "/"/>;
+    //     }
+    //     else if (bio.notCreated) {
+    //         return <Navigate to = '/create-bio' state = {{internal: true}}/>;
+    //     } 
+    //     else {
             return (
                 <div className = "homepage-container">
 
@@ -97,15 +96,16 @@ function Home() {
 
                                 {/* <Route path="/chat" Chat component here />  */}
                                 <Route path="/profile" element={<Profile />}/>
+                                <Route path="/chat" element = {<Chat/>}/> 
                             </Routes>
                         </div>
                     </div>
                 </div>
             )
-        }
-    } else {
-        return <>Loading...</>;
-    }
+    //     }
+    // } else {
+    //     return <>Loading...</>;
+    // }
     
 }
 

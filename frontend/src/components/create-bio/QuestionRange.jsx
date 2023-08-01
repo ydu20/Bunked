@@ -3,7 +3,7 @@ import {Box} from '@mui/material';
 import Slider from '@mui/material/Slider';
 
 
-function QuestionRange({label, question, marks, min, max, isPrivate, changeAnswer}) {
+function QuestionRange({label, question, marks, min, max, isPrivate, changeAnswer, visible}) {
 
     // ********************* Variables & Functions **********************
 
@@ -27,8 +27,7 @@ function QuestionRange({label, question, marks, min, max, isPrivate, changeAnswe
     };
     
     useEffect(() => {
-        var r = [range]
-        changeAnswer(label, r);
+        changeAnswer(label, range);
     }, [range]);
 
     const setLabel = (value) => {
@@ -48,7 +47,7 @@ function QuestionRange({label, question, marks, min, max, isPrivate, changeAnswe
     };
 
     return(
-        <Box fullWidth>
+        <Box display = {visible ? 'block' : 'none'}>
             <Box fontSize = '17px' marginBottom={isPrivate ? '10px' : '18px'}>
                 <Box>
                     {question}

@@ -4,7 +4,7 @@ import {Box, TextField} from '@mui/material';
 import Chip from '@mui/material/Chip';
 
 
-function QuestionTextbox({label, multiple, question, isPrivate, changeAnswer}) {
+function QuestionTextbox({label, multiple, question, isPrivate, changeAnswer, visible}) {
 
     let [textList, setTextList] = useState([]);
     let [textInput, setTextInput] = useState("");
@@ -67,7 +67,7 @@ function QuestionTextbox({label, multiple, question, isPrivate, changeAnswer}) {
     }
 
     return (
-        <Box fullWidth>
+        <Box display = {visible ? 'block' : 'none'}>
             <Box fontSize = '17px' marginBottom={isPrivate ? '10px' : '18px'}>
                 <Box>
                     {question}
