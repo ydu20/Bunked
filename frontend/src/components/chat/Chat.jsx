@@ -2,47 +2,109 @@ import {useRef, useEffect, useState } from 'react';
 import {Box, Grid, Paper, Stack, TextField} from '@mui/material';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import Cookies from 'js-cookie';
+import io from "socket.io-client";
+import socket from "./socket"
 
 import ted from "../../testImages/Ted.jpg"
 import barney from "../../testImages/Barney.jpeg"
 import marshall from "../../testImages/Marshall.jpeg"
-
 function Chat() {
     
     // ********************* Variables & Functions **********************
 
-    // Hard-coded Matches
-    const [matches, setMatches] = useState([
+    const tedMatches = [
         {
-            email: 'a@b.com',
+            chatID: '00002',
+            email: 'barney@upenn.edu',
+            name: 'Barney',
+            picture: barney,
+            msg: [
+                {
+                    timeStamp: '2023-07-01',
+                    sender: 'ted@upenn.edu',
+                    text: "Hey, how's it going?",
+                },
+                {
+                    timeStamp: '2023-07-02',
+                    sender: 'barney@upenn.edu',
+                    text: "Not much, how are you?",
+                }
+            ],
+        },
+        {
+            chatID: '00005',
+            email: 'marshall@upenn.edu',
+            name: 'Marshall',
+            picture: marshall,
+            msg: [],
+        },
+    ]
+
+    const barneyMatches = [
+        {
+            chatID: '00002',
+            email: 'ted@upenn.edu',
             name: 'Ted',
             picture: ted,
             msg: [
                 {
                     timeStamp: '2023-07-01',
-                    owner: 'a@b.com',
+                    sender: 'ted@upenn.edu',
                     text: "Hey, how's it going?",
                 },
                 {
                     timeStamp: '2023-07-02',
-                    owner: 'ydu24@seas.upenn.edu',
+                    sender: 'barney@upenn.edu',
+                    text: "Not much, how are you?",
+                }
+            ]
+        }
+    ]
+
+    const myMatches = [
+        {
+            chatID: '00001',
+            email: 'ted@upenn.edu',
+            name: 'Ted',
+            picture: ted,
+            msg: [
+                {
+                    timeStamp: '2023-07-01',
+                    sender: 'ted@upenn.edu',
+                    text: "Hey, how's it going?",
+                },
+                {
+                    timeStamp: '2023-07-02',
+                    sender: 'ydu24@seas.upenn.edu',
                     text: "Not much, how are you?",
                 }
             ]
         },
         {
-            email: 'a@c.com',
+            chatID: '00003',
+            email: 'barney@upenn.edu',
             name: 'Barney',
             picture: barney,
             msg: [],
         },
         {
-            email: 'j@k.c',
+            chatID: '00004',
+            email: 'marshall@upenn.edu',
             name: 'Marshall',
             picture: marshall,
             msg: [],
         },
-    ]);
+    ]
+
+    const currMatches = (Cookies.get('email') === 'ted@upenn.edu') ? tedMatches :
+                        (Cookies.get('email') === 'barney@upenn.edu') ? barneyMatches :
+                        myMatches;
+
+
+
+
+    // Hard-coded Matches
+    const [matches, setMatches] = useState(currMatches);
 
     let [current, setCurrent] = useState(-1);
 
@@ -50,29 +112,91 @@ function Chat() {
 
     const sendMsg = () => {
         if (msgInput.trim() !== '') {
-            setMatches((prevMatches) => {
-                const updated = [...prevMatches];
-                updated[current] = {
-                    ...updated[current],
-                    msg: [
-                        ...updated[current].msg,
-                        {
-                            timeStamp: new Date().toLocaleString(),
-                            owner: Cookies.get('email'),
-                            text: msgInput,
-                        }
-                    ]
-                }
-                
-                console.log(updated);
+            
+            // Update local data
+            var timeStamp = new Date().toLocaleString();
+            
+            updateLocalMsg(
+                current, 
+                timeStamp, 
+                Cookies.get('email'), 
+                msgInput,
+            );
 
-                return(updated);
-            });
+            // Send socket message
+            const messageData = {
+                room: matches[current].chatID,
+                sender: Cookies.get('email'),
+                timeStamp: timeStamp,
+                text: msgInput,
+            };
+
+            socket.emit("send_message", messageData);
+
+            // setMatches((prevMatches) => {
+            //     const updated = [...prevMatches];
+            //     updated[current] = {
+            //         ...updated[current],
+            //         msg: [
+            //             ...updated[current].msg,
+            //             {
+            //                 timeStamp: new Date().toLocaleString(),
+            //                 sender: Cookies.get('email'),
+            //                 text: msgInput,
+            //             }
+            //         ]
+            //     }
+                
+            //     console.log(updated);
+
+            //     return(updated);
+            // });
 
             setMsgInput("");
         }
     }
 
+    const updateLocalMsg = (index, timeStamp, sender, text) => {
+        setMatches((prevMatches) => {
+            const updated = [...prevMatches];
+            updated[index] = {
+                ...updated[index],
+                msg: [
+                    ...updated[index].msg,
+                    {
+                        timeStamp: timeStamp,
+                        sender: sender,
+                        text: text,
+                    }
+                ]
+            }
+
+            console.log(updated);
+            return(updated);
+        });
+    }
+
+    useEffect(() => {
+        matches.map( (m, _) => {
+            socket.emit("join_room", m.chatID);
+        });
+    }, []);
+
+    useEffect(() => {
+        socket.on("receive_message", (data) => {
+            console.log("Message received");
+            for (var i = 0; i < matches.length; i++) {
+                if (matches[i].chatID === data.room && Cookies.get('email') !== data.sender) {
+                    updateLocalMsg(i, data.timeStamp, data.sender, data.text);
+                    break;
+                }
+            }
+        });
+        return () => socket.off('receive_message');
+    }, [socket])
+
+
+    
     // ********************* Styling **********************
 
     const tempStyle = {
@@ -197,15 +321,16 @@ function Chat() {
                         </Box>
                         <Stack sx = {messagePaneWrapperStyle} spacing = '16px'>
                             { current === -1 ? "" :
-                                matches[current]['msg'].map((msg) => (
+                                matches[current]['msg'].map((msg, i) => (
                                     <Box fullWidth
-                                        display = 'flex'                                     
-                                        flexDirection = {msg['owner'] === Cookies.get('email') ? 'row-reverse' : 'row'}
+                                        key = {i}
+                                        display = 'flex'
+                                        flexDirection = {msg['sender'] === Cookies.get('email') ? 'row-reverse' : 'row'}
                                     >
                                         <Box 
                                             sx = {messageBoxStyle}
-                                            backgroundColor = {msg['owner'] === Cookies.get('email') ? 'secondary.main' : '#0000000d'}
-                                            color = {msg['owner'] === Cookies.get('email') ? 'white' : 'black'}
+                                            backgroundColor = {msg['sender'] === Cookies.get('email') ? 'secondary.main' : '#0000000d'}
+                                            color = {msg['sender'] === Cookies.get('email') ? 'white' : 'black'}
                                         >
                                             {msg['text']}
                                         </Box>

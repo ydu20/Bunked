@@ -2,16 +2,15 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const chatsSchema = new Schema({
+const messageSchema = new Schema({
 
-    sourceEmail: {
+    chatID: {
         type: String,
         required: true,
-        trim: true,
         minlength: 5,
     },
 
-    targetEmail: {
+    senderEmail: {
         type: String,
         required: true,
         trim: true,
@@ -30,4 +29,8 @@ const chatsSchema = new Schema({
         required: true,
     }
     
-})
+});
+
+const Message = mongoose.model('Message', messageSchema);
+
+module.exports = Message;

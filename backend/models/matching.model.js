@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const matchesSchema = new Schema({
+const matchingSchema = new Schema({
     
     userA: {
         type: String,
@@ -15,5 +15,14 @@ const matchesSchema = new Schema({
         required: true,
         trim: true,
         minlength: 5,
+    },
+    chatID: {
+        type: String,
+        required: true,
+        minlength: 5,
     }
-})
+});
+
+const Matching = mongoose.model('Matching', matchingSchema);
+
+module.exports = Matching;
