@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import {Home, Chat, Person, Settings} from '@mui/icons-material'
 import { Button } from '@mui/material'
 
-const Sidebar = ({setDisplayMode}) => {
+const Sidebar = () => {
 
     const siderbarData = [
         {
@@ -23,7 +23,8 @@ const Sidebar = ({setDisplayMode}) => {
         },
         {
             title: "Profile",
-            icon: <Person />
+            icon: <Person />,
+            navigateLink: "profile"
         },
         {
             title: "Settings",

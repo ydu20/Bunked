@@ -118,12 +118,21 @@ exports.getUserBio = async (req, res) => {
       gender: bio.gender,
       majors: bio.majors,
       year: bio.year,
+      extroversion: bio.extroversion,
+      cleanliness: bio.cleanliness,
+      noise: bio.noise,
+      ...(bio.aboutBio && {aboutBio: bio.aboutBio}),
       ...(bio.dorm && {dorm: bio.dorm}),
       ...(bio.greek && {greek: bio.greek}),
       ...(bio.hobbies && {hobbies: bio.hobbies}),
       ...(bio.hometown && {hometown: bio.hometown}),
       ...(bio.shows && {shows: bio.shows}),
       ...(bio.instagram && {instagram: bio.instagram}),
+      ...(bio.sleep && {sleep: bio.sleep}),
+      ...(bio.guests && {guests: bio.guests}),
+      ...(bio.smoke && {smoke: bio.smoke}),
+      ...(bio.drink && {drink: bio.drink}),
+      ...(bio.music && {music: bio.music}),
     })
   }
 }
@@ -162,8 +171,6 @@ exports.createUserBio = async (req, res) => {
   // create Bio    
   const name = user.name;
   const gender = req.body.gender;
-
-
   const majors = req.body.majors;
   const year = req.body.year;
   const extroversion = req.body.extroversion;
@@ -208,6 +215,7 @@ exports.updateUserBio = async (req, res) => {
 
   // Check if bio exists and update it
   const email = req.body.email.toLowerCase();
+  const aboutBio = req.body.aboutBio
   const sleep = req.body.sleep;
   const guests = req.body.guests;
   const dorm = req.body.dorm;
@@ -229,6 +237,7 @@ exports.updateUserBio = async (req, res) => {
   };
 
   const update = {
+    ...(aboutBio && {aboutBio}),
     ...(sleep && {sleep}),
     ...(guests && {guests}),
     ...(dorm && {dorm}),
