@@ -1,5 +1,5 @@
-let User = require('../models/user.model');
-let UserImage = require('../models/user.image.model');
+const User = require('../models/user.model');
+const UserImage = require('../models/user.image.model');
 const fs = require('fs');
 
 var deleteFiles = (files) => {

@@ -14,7 +14,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // db
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -50,8 +49,13 @@ app.use(cors({origin: true, credentials: true}));
 // routes
 const userRoutes = require('./routes/user.routes');
 const actionRoutes = require('./routes/action.routes');
+const matchingRoutes = require('./routes/matching.routes');
+const chatRoutes = require('./routes/chat.routes');
+
 app.use("/", userRoutes);
 app.use("/actions/", actionRoutes);
+app.use("/", chatRoutes);
+app.use("/", matchingRoutes);
 
 // port
 const port = process.env.PORT || 8080;

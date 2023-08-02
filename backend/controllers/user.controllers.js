@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
-let User = require('../models/user.model');
-let UserBio = require('../models/user.bio.model')
+const User = require('../models/user.model');
+const UserBio = require('../models/user.bio.model')
 const validate = require("../middlewares/validators");
 const recommender = require("../scripts/recommender");
 

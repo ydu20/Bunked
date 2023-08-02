@@ -29,7 +29,7 @@ function Home() {
         .then(async (res) => {
             setRecommendedUsers(res.data);
             setLastIndex(0);
-        })
+        });
     }
 
 
