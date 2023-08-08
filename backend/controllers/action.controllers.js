@@ -191,7 +191,7 @@ const getUsersInWaitingRoom = async (req, res) => {
     const targetEmails = pairings.map(pair => pair.targetUserEmail);
 
     // Get target users
-    const targetUsers = await User.find({email: {$in: targetEmails}});
+    const targetUsers = await UserBio.find({email: {$in: targetEmails}});
     
     return res.status(200).json(targetUsers);
 }
