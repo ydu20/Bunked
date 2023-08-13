@@ -649,13 +649,19 @@ function CreateBio() {
                 formData.append('pictures', pic);
             })
             console.log(formData);
-
+            
             axios.post('/profile-pic', formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data'
                 }
             }).then(() => {
-                navigate('/home');
+                // Generate initial recommendations
+                axios.post('/generateNewRecs', {email: Cookies.get('email')})
+                .then(() => {
+                    navigate('/home');
+                }).catch((error) => {
+                    setErrorMsg(error.response.data);
+                }) 
             }).catch((error) => {
                 setErrorMsg(error.response.data);
             });

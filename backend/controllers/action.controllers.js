@@ -191,7 +191,7 @@ const getUsersInWaitingRoom = async (req, res) => {
     const targetEmails = pairings.map(pair => pair.targetUserEmail);
 
     // Get target users
-    const targetUsers = await User.find({email: {$in: targetEmails}});
+    const targetUsers = await UserBio.find({email: {$in: targetEmails}});
     
     return res.status(200).json(targetUsers);
 }
@@ -293,6 +293,31 @@ const updateUserWait = async (req, res) => {
 
 }
 
+// Route to generate new recommendations into waiting room
+// Input body: req.body.email, email of the user for whom we want to generate new recommendations
+const generateNewRecs = async (req, res) => {
+    const email = req.body.email;
+    
+    const baseuserbio = await UserBio.findOne({email: email});
+    if (!baseuserbio) {
+        return null;
+    }
+    const nearestUsers = await recommender.findNearest(baseuserbio, 6);
+
+    nearestUsers.forEach(user => {
+        const newPair = new Action({
+            baseUserEmail: email,
+            targetUserEmail: user[0].email,
+            actionType: 1
+        })
+
+        newPair.save()
+    })
+
+    return res.status(200).json("New Recommendations Generated")
+
+}
+
 module.exports = {
     getAccepted,
     acceptUser,
@@ -303,4 +328,5 @@ module.exports = {
     removeFromWaitingRoom,
     checkMatch,
     updateUserWait,
+    generateNewRecs
 }

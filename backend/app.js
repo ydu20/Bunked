@@ -50,8 +50,10 @@ app.use(cors({origin: true, credentials: true}));
 // routes
 const userRoutes = require('./routes/user.routes');
 const actionRoutes = require('./routes/action.routes');
+const matchRoutes = require('./routes/match.routes');
 app.use("/", userRoutes);
 app.use("/actions/", actionRoutes);
+app.use("/match/", matchRoutes);
 
 // port
 const port = process.env.PORT || 8080;
